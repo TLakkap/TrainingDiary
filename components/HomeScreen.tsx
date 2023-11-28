@@ -1,10 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 export default function HomeScreen() {
   const [selectedDay, setSelectedDay] = useState('')
+
+  LocaleConfig.locales['fi'] = {
+    monthNames: [
+      'Tammikuu',
+      'Helmikuu',
+      'Maaliskuu',
+      'Huhtikuu',
+      'Toukokuu',
+      'Kesäkuu',
+      'Heinäkuu',
+      'Elokuu',
+      'Syyskuu',
+      'Lokakuu',
+      'Marraskuu',
+      'Joulukuu'
+    ],
+    monthNamesShort: ['Tammi', 'Helmi', 'Maalis', 'Huhti', 'Touko', 'Kesä', 'Heinä', 'Elo', 'Syys', 'Loka', 'Marras', 'Joulu'],
+    dayNames: ['Sunnuntai', 'Maanantai', 'Tiistai', 'Keskiviiko', 'Torstai', 'Perjantai', 'Lauantai'],
+    dayNamesShort: ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'],
+    today: "Tänään"
+  };
+  LocaleConfig.defaultLocale = 'fi';
 
   useEffect(() => {     // Set today to selected day
     const today = new Date(); // Get this date
@@ -22,7 +44,10 @@ export default function HomeScreen() {
 
   return (
     <View>
-      <Calendar />
+      <Calendar 
+        firstDay={1}  // Week starts from Monday
+        onDayPress={day => setSelectedDay(day.dateString)}
+      />
       <Text>{selectedDay}</Text>
       <Button title='Lisää treeni' onPress={() => console.log("tästä treenin lisäykseen")} />
     </View>
