@@ -1,15 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { Text, View, Button } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { storeData, getData } from './TrainingStorage'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Define Stack-parameters
+type RootStackParamList = {
+  AddTraining: undefined;
+};
+
+// Define types for props
+type AddTrainingScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'AddTraining'>;
+};
 
 interface Workout {
   liikunta: string;
   kesto: string;
 }
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }: AddTrainingScreenProps) {
   const [selectedDay, setSelectedDay] = useState('')
   const [trainings, setTrainings] = useState([])
 
@@ -50,19 +60,16 @@ export default function HomeScreen() {
     //const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     
     const formattedDate = `${day}.${month}.${year}`
-    console.log("täällä")
     setSelectedDay(formattedDate);    
   }, []);
 
   useEffect(() => {   //get trainings for the selected day
     const getTrainings = (async () => {
-      console.log("täälläkin")
       const response = await getData(selectedDay)
-      console.log("response:", response)
       setTrainings(response)
     })
     getTrainings()
-  }, [selectedDay])
+  }, [selectedDay])  // gets new trainings for the day everytime the selectedDay is changed
 
   const handleStoreData = async () => {
     try {
@@ -82,8 +89,7 @@ export default function HomeScreen() {
   }
 
   const handleDayChange = (day: string) => {
-    console.log("day:", day)
-    const parsedDate = new Date(day); // Parsi päivämäärä merkkijonosta
+    const parsedDate = new Date(day); // parse date from string
     const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;
 
     setSelectedDay(formattedDate)
@@ -97,7 +103,7 @@ export default function HomeScreen() {
       />
       <Text>{selectedDay}</Text>
       {showTrainings()}
-      <Button title='Lisää treeni' onPress={handleStoreData} />
+      <Button title='Lisää treeni' onPress={() => navigation.navigate('AddTraining')} />
     </View>
   );
 }

@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react'
-import { Button, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button, Text, View, TextInput } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Define Stack-parameters
@@ -37,7 +36,6 @@ export default function LoginScreen({ navigation }: HomeScreenProps) {
         title="Kirjaudu"
         onPress={() => navigation.navigate('Home')}
         />
-      {/* <StatusBar style="auto" /> */}
     </View>
   );
 }
