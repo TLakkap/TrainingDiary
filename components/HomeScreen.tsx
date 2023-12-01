@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { storeData, getData } from './TrainingStorage'
+import { storeData, getData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Define Stack-parameters
 type RootStackParamList = {
-  AddTraining: undefined;
+  AddWorkout: undefined;
 };
 
 // Define types for props
-type AddTrainingScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'AddTraining'>;
+type AddWorkoutScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'AddWorkout'>;
 };
 
 interface Workout {
-  liikunta: string;
-  kesto: string;
+  workout: string;
+  time: string;
 }
 
-export default function HomeScreen({ navigation }: AddTrainingScreenProps) {
+export default function HomeScreen({ navigation }: AddWorkoutScreenProps) {
   const [selectedDay, setSelectedDay] = useState('')
   const [trainings, setTrainings] = useState([])
 
@@ -46,8 +46,8 @@ export default function HomeScreen({ navigation }: AddTrainingScreenProps) {
   LocaleConfig.defaultLocale = 'fi';
 
   const workouts = [
-    { liikunta: 'juoksu', kesto: '30 min' },
-    { liikunta: 'voimaharjoittelu', kesto: '45 min' },
+    { workout: 'juoksu', time: '30 min' },
+    { workout: 'voimaharjoittelu', time: '45 min' },
   ];
 
   useEffect(() => {     // Set today to selected day
@@ -82,9 +82,9 @@ export default function HomeScreen({ navigation }: AddTrainingScreenProps) {
 
   const showTrainings = () => {
     if (trainings !== null) {
-        return trainings.map((t: Workout) => <Text>{t.liikunta}</Text>)
+        return trainings.map((t: Workout) => <Text>{t.workout}</Text>)
      } else {
-        return <Text>Ei vielä treenejä tälle päivälle</Text>
+        return <Text>Ei vielä harjoituksia tälle päivälle</Text>
     }
   }
 
@@ -103,7 +103,7 @@ export default function HomeScreen({ navigation }: AddTrainingScreenProps) {
       />
       <Text>{selectedDay}</Text>
       {showTrainings()}
-      <Button title='Lisää treeni' onPress={() => navigation.navigate('AddTraining')} />
+      <Button title='Lisää harjoitus' onPress={() => navigation.navigate('AddWorkout')} />
     </View>
   );
 }

@@ -1,30 +1,30 @@
 export const EXERCISEDATA = [
     {
         id: '1',
-        exercise: 'juoksu',
+        exercise: 'Juoksu',
     },
     {
         id: '2',
-        exercise: 'kävely',
+        exercise: 'Kävely',
     },
     {
         id: '3',
-        exercise: 'hiihto',
+        exercise: 'Hiihto',
     },
     {
         id: '4',
-        exercise: 'kuntosali',
+        exercise: 'Kuntosali',
     },
     {
         id: '5',
-        exercise: 'venyttely',
+        exercise: 'Venyttely',
     },
     {
         id: '6',
-        exercise: 'muu ulkoliikunta',
+        exercise: 'Muu ulkoliikunta',
     },
     {
         id: '7',
-        exercise: 'muu sisäliikunta',
+        exercise: 'Muu sisäliikunta',
     },
 ]

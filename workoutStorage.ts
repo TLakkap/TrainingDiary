@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Workout {
-  liikunta: string;
-  kesto: string;
+  workout: string;
+  time: string;
 }
 
 export const storeData = async (date: string, workouts: Workout[]): Promise<void> => {
