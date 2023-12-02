@@ -3,26 +3,21 @@ import { Text, View, Button } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { storeData, getData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-// Define Stack-parameters
-type RootStackParamList = {
-  AddWorkout: undefined;
-};
-
-// Define types for props
-type AddWorkoutScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'AddWorkout'>;
-};
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParams } from '../App';
 
 interface Workout {
-  workout: string;
-  time: string;
+  id: string
+  workout: string
+  time: string
 }
 
-export default function HomeScreen({ navigation }: AddWorkoutScreenProps) {
+export default function HomeScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [selectedDay, setSelectedDay] = useState('')
-  const [trainings, setTrainings] = useState([])
+  const [workouts, setWorkouts] = useState([])
 
+  // Calendar language to Finnish
   LocaleConfig.locales['fi'] = {
     monthNames: [
       'Tammikuu',
@@ -45,11 +40,6 @@ export default function HomeScreen({ navigation }: AddWorkoutScreenProps) {
   };
   LocaleConfig.defaultLocale = 'fi';
 
-  const workouts = [
-    { workout: 'juoksu', time: '30 min' },
-    { workout: 'voimaharjoittelu', time: '45 min' },
-  ];
-
   useEffect(() => {     // Set today to selected day
     const today = new Date(); // Get this date
     const year = today.getFullYear();
@@ -63,26 +53,31 @@ export default function HomeScreen({ navigation }: AddWorkoutScreenProps) {
     setSelectedDay(formattedDate);    
   }, []);
 
-  useEffect(() => {   //get trainings for the selected day
-    const getTrainings = (async () => {
-      const response = await getData(selectedDay)
-      setTrainings(response)
-    })
-    getTrainings()
-  }, [selectedDay])  // gets new trainings for the day everytime the selectedDay is changed
+  useEffect(() => {   //get workouts for the selected day
+    const getWorkouts = async () => {
+      if (selectedDay !== null){
+        console.log("selectedDay:", selectedDay)
+        const response = await getData(selectedDay)
+        setWorkouts([])
+        setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
+    }}
+    getWorkouts()
+  }, [selectedDay])  // gets new workouts for the day everytime the selectedDay is changed
 
-  const handleStoreData = async () => {
+  /* const handleStoreData = async (workout: Workout) => {
     try {
-      await storeData(selectedDay, workouts);
+      await storeData(selectedDay, workout);
       console.log('Treenit tallennettu onnistuneesti');
     } catch (error) {
       console.error('Virhe tallennuksessa:', error);
     }
-  };
+  }; */
 
-  const showTrainings = () => {
-    if (trainings !== null) {
-        return trainings.map((t: Workout) => <Text>{t.workout}</Text>)
+  const showWorkouts = () => {
+    if (workouts.length > 0 && workouts[0] !== null) {
+        console.log("length", workouts.length)
+        console.log("täsä:", workouts)
+        return workouts.map((w: Workout) => <Text key={w.id}>{w.workout} {w.time}</Text>)
      } else {
         return <Text>Ei vielä harjoituksia tälle päivälle</Text>
     }
@@ -102,8 +97,9 @@ export default function HomeScreen({ navigation }: AddWorkoutScreenProps) {
         onDayPress={(day) => handleDayChange(day.dateString)}
       />
       <Text>{selectedDay}</Text>
-      {showTrainings()}
-      <Button title='Lisää harjoitus' onPress={() => navigation.navigate('AddWorkout')} />
+      {showWorkouts()}
+      <Button title='Lisää harjoitus'
+        onPress={() => navigation.navigate('AddWorkout', {selectedDay})} />
     </View>
   );
 }

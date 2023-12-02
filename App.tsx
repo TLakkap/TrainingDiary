@@ -1,21 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './components/LoginScreen'
 import HomeScreen from './components/HomeScreen'
 import AddWorkoutScreen from './components/AddWorkoutScreen';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParams = {
+  Login: undefined;
+  Home: undefined;
+  AddWorkout: {
+    selectedDay: string
+  }
+}
+
+const RootStack = createNativeStackNavigator<RootStackParams>();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name='Login' component={LoginScreen} />
-        <Stack.Screen name='Home' component={HomeScreen} />
-        <Stack.Screen name='AddWorkout' component={AddWorkoutScreen} />
-      </Stack.Navigator>
+      <RootStack.Navigator initialRouteName='Login'>
+        <RootStack.Screen name='Login' component={LoginScreen} />
+        <RootStack.Screen name='Home' component={HomeScreen} />
+        <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }

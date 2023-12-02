@@ -5,10 +5,11 @@ interface Workout {
   time: string;
 }
 
-export const storeData = async (date: string, workouts: Workout[]): Promise<void> => {
+export const storeData = async (date: string, workouts: Workout): Promise<void> => {
     try {
       const jsonWorkouts = JSON.stringify(workouts);
       await AsyncStorage.setItem(date, jsonWorkouts);
+      console.log("jsonworkouts: ", jsonWorkouts)
     } catch (error) {
       console.error(error);
     }
