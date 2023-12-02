@@ -4,6 +4,13 @@ interface Workout {
   id: string;
   workout: string;
   time: string;
+  comments: string;
+  details: {
+    gymExercise: string | undefined
+    weights: number | undefined
+    reps: number | undefined
+    sets: number | undefined
+} | undefined
 }
 
 export const storeData = async (date: string, newWorkout: Workout): Promise<void> => {
@@ -19,7 +26,6 @@ export const storeData = async (date: string, newWorkout: Workout): Promise<void
       const updatedWorkouts = [...existingWorkouts, newWorkout]
       const jsonWorkouts = JSON.stringify(updatedWorkouts);
       await AsyncStorage.setItem(date, jsonWorkouts);
-      console.log("jsonworkouts: ", jsonWorkouts)
     } catch (error) {
       console.error(error);
     }
@@ -32,7 +38,6 @@ export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> 
       if(res){
         try {
           const json = JSON.parse(res);
-          console.log('json:', json);
           return json;
         } catch (error) {
           console.error('Invalid JSON:', error);

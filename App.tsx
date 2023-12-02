@@ -5,12 +5,26 @@ import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navig
 import LoginScreen from './components/LoginScreen'
 import HomeScreen from './components/HomeScreen'
 import AddWorkoutScreen from './components/AddWorkoutScreen';
+import GymExercises from './components/GymExercises'
 
 export type RootStackParams = {
   Login: undefined;
-  Home: undefined;
-  AddWorkout: {
-    selectedDay: string
+  Home: {
+    details: {
+      gymExercise: string,
+      weights: number,
+      reps: number,
+      sets: number
+    } | undefined;
+    classification: string
+  }
+  AddWorkout: undefined
+  GymExercises: {
+    exercises: {
+      id: string
+      exercise: string
+    }[]
+    classification: string
   }
 }
 
@@ -23,6 +37,7 @@ export default function App() {
         <RootStack.Screen name='Login' component={LoginScreen} />
         <RootStack.Screen name='Home' component={HomeScreen} />
         <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
+        <RootStack.Screen name='GymExercises' component={GymExercises} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
