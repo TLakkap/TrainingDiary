@@ -15,7 +15,7 @@ interface Workout {
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [selectedDay, setSelectedDay] = useState('')
-  const [workouts, setWorkouts] = useState([])
+  const [workouts, setWorkouts] = useState<Workout[]>([])
 
   // Calendar language to Finnish
   LocaleConfig.locales['fi'] = {
@@ -56,27 +56,25 @@ export default function HomeScreen() {
   useEffect(() => {   //get workouts for the selected day
     const getWorkouts = async () => {
       if (selectedDay !== null){
-        console.log("selectedDay:", selectedDay)
         const response = await getData(selectedDay)
-        setWorkouts([])
-        setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
+        if (response) {
+          console.log("res:", response)
+          if(Array.isArray(response)){
+            console.log("on taulukko")
+          } else {
+            console.log("ei oo")
+          }
+          setWorkouts([])
+          setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
+        } else {
+          setWorkouts([])
+        }
     }}
     getWorkouts()
   }, [selectedDay])  // gets new workouts for the day everytime the selectedDay is changed
 
-  /* const handleStoreData = async (workout: Workout) => {
-    try {
-      await storeData(selectedDay, workout);
-      console.log('Treenit tallennettu onnistuneesti');
-    } catch (error) {
-      console.error('Virhe tallennuksessa:', error);
-    }
-  }; */
-
   const showWorkouts = () => {
-    if (workouts.length > 0 && workouts[0] !== null) {
-        console.log("length", workouts.length)
-        console.log("täsä:", workouts)
+    if (workouts && workouts[0] !== null) {
         return workouts.map((w: Workout) => <Text key={w.id}>{w.workout} {w.time}</Text>)
      } else {
         return <Text>Ei vielä harjoituksia tälle päivälle</Text>

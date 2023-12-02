@@ -1,13 +1,23 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Workout {
+  id: string;
   workout: string;
   time: string;
 }
 
-export const storeData = async (date: string, workouts: Workout): Promise<void> => {
+export const storeData = async (date: string, newWorkout: Workout): Promise<void> => {
     try {
-      const jsonWorkouts = JSON.stringify(workouts);
+      let existingWorkouts: Workout[] = []
+      const existingData = await AsyncStorage.getItem(date)
+
+      if(existingData) {
+        const jsonExisting = JSON.parse(existingData)
+        existingWorkouts = existingWorkouts.concat(jsonExisting)
+      }
+
+      const updatedWorkouts = [...existingWorkouts, newWorkout]
+      const jsonWorkouts = JSON.stringify(updatedWorkouts);
       await AsyncStorage.setItem(date, jsonWorkouts);
       console.log("jsonworkouts: ", jsonWorkouts)
     } catch (error) {
@@ -15,7 +25,7 @@ export const storeData = async (date: string, workouts: Workout): Promise<void> 
     }
   };
 
-export const getData = async(dateToRetrieve: string) => {
+export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> => {
     try {
       const res = await AsyncStorage.getItem(dateToRetrieve)
 
