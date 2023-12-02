@@ -11,6 +11,7 @@ interface Workout {
     id: string
     workout: string
     time: string
+    comments: string
   }
 
 interface Exercise {
@@ -55,9 +56,7 @@ export default function AddWorkoutScreen ({route, navigation}: Props) {
 
     return(
         <View>
-            <Modal
-                visible={modalVisible}
-            >
+            <Modal visible={modalVisible}>
                 <Text>Lisää harjoitus</Text>
                 <Text>{selectedExercise}</Text>
                 <Text>Kesto</Text>
@@ -68,7 +67,8 @@ export default function AddWorkoutScreen ({route, navigation}: Props) {
                     const workout = {
                         id: generateUniqueId(),
                         workout: selectedExercise,
-                        time: '5 min'
+                        time: '5 min',
+                        comments: ''
                     }
                     handleStoreData(workout)
                     setModalVisible(false)
