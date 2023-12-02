@@ -76,8 +76,8 @@ export default function HomeScreen({route}: Props) {
     getWorkouts()
   }, [selectedDay])  // gets new workouts for the day everytime the selectedDay is changed
 
-  useEffect(() => {
-    if (route.params?.details) {
+  useEffect(() => {  // storing new workout
+    if (route.params?.details) {  // checking if there are details parameters from GymExercises
       const workout = {
         id: generateUniqueId(),
         workout: route.params.classification,
@@ -86,7 +86,7 @@ export default function HomeScreen({route}: Props) {
         details: route.params.details
       }
       handleStoreData(workout)
-      setWorkouts(workouts.concat(workout))
+      setWorkouts(workouts.concat(workout))  // new workout is rendered to the screen
     }
   }, [route.params?.details])
 

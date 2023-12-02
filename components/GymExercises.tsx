@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FlatList, Text, View, Button, Pressable, Modal, TextInput } from 'react-native';
-import { EXERCISEDATA } from '../Data';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 
@@ -30,7 +29,7 @@ export default function GymExercises ({route, navigation}: Props) {
     const renderItem = ({ item }) => {
         return (
             <Pressable onPress={() => select(item)}>
-                <Text style={{backgroundColor: item.id === selectedId ? '#c0c0c0': '#f5f5f5'}}>{item.exercise}</Text>
+                <Text>{item.exercise}</Text>
             </Pressable>
         )
     }
@@ -61,6 +60,5 @@ export default function GymExercises ({route, navigation}: Props) {
             renderItem={renderItem}
         ></FlatList>
         </View>
-    )
-    
+    )   
 }

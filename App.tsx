@@ -1,7 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './components/LoginScreen'
 import HomeScreen from './components/HomeScreen'
 import AddWorkoutScreen from './components/AddWorkoutScreen';
@@ -15,7 +13,7 @@ export type RootStackParams = {
       weights: number,
       reps: number,
       sets: number
-    } | undefined;
+    }
     classification: string
   }
   AddWorkout: undefined
