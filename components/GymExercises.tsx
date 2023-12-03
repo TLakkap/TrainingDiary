@@ -19,6 +19,9 @@ export default function GymExercises ({route, navigation}: Props) {
     const [selectedId, setSelectedId] = useState('')
     const [selectedExercise, setSelectedExercise] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
+    const [exerciseDetails, setExerciseDetails] = useState<any[]>([])
+    const [weights, setWeights] = useState('')
+    const [reps, setReps] = useState('')
 
     const select = (item) => {
         setSelectedId(item.id)
@@ -34,22 +37,37 @@ export default function GymExercises ({route, navigation}: Props) {
         )
     }
 
+    const addSet = () => {
+        const newSet = {
+            weights: weights,
+            reps: reps
+        }
+        setExerciseDetails([...exerciseDetails, newSet])
+    }
+
     return(
         <View>
             <Modal visible={modalVisible}>
                 <Text>{selectedExercise}</Text>
                 <Text>Painot kg</Text>
-                <TextInput />
+                <TextInput
+                    value={weights}
+                    onChangeText={text => setWeights(text)}
+                    keyboardType='numeric'
+                    placeholder='kg'/>
                 <Text>Toistot</Text>
-                <TextInput />
-                <Text>Sarjat</Text>
-                <TextInput />
+                <TextInput
+                    value={reps}
+                    onChangeText={text => setReps(text)}
+                    keyboardType='numeric'
+                    placeholder='toistot'/>
+                {exerciseDetails.length !== 0 && exerciseDetails.map((ed, index) => 
+                <Text key={index}>{ed.weights} kg {ed.reps} toistoa</Text>)}
+                <Button title="Lisää" onPress={() => addSet()} />
                 <Button title="Tallenna" onPress={() => {
                     const details = {
                         gymExercise: selectedExercise,
-                        weights: 12.5,
-                        reps: 5,
-                        sets: 4
+                        gymExerciseDetails: exerciseDetails
                     }
                     navigation.navigate("Home", {details, classification})
                     setModalVisible(false)

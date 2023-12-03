@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { storeData, getData } from '../workoutStorage'
+import { storeData, getData, clearAll } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
@@ -12,14 +12,14 @@ import { v4 as uuidv4 } from 'uuid'
 interface Workout {
   id: string
   workout: string
-  time: string
   comments: string
   details: {
       gymExercise: string | undefined
-      weights: number | undefined
-      reps: number | undefined
-      sets: number | undefined
-  } | undefined
+      gymExerciseDetails: {
+        weights: string
+        reps: string
+      }[]
+  }
 }
 
 type Props = NativeStackScreenProps<RootStackParams, "Home">
@@ -81,7 +81,6 @@ export default function HomeScreen({route}: Props) {
       const workout = {
         id: generateUniqueId(),
         workout: route.params.classification,
-        time: '5 min',
         comments: '',
         details: route.params.details
       }
@@ -105,10 +104,16 @@ export default function HomeScreen({route}: Props) {
 
   const showWorkouts = () => {
     if (workouts.length !== 0 && workouts[0] !== null) {
+      console.log("wos:", workouts[0].details)
         return workouts.map((w: Workout) => 
           <View key={w.id}>
-            <Text>{w.workout} {w.time}</Text>
+            <Text>{w.workout}</Text>
             <Text>{w.details?.gymExercise}</Text>
+            {w.details?.gymExerciseDetails?.map((d, index) => 
+              <View key={index}>
+                {d.weights !== '' && <Text>{d.weights} kg</Text>}
+                <Text>{d.reps} toistoa</Text>
+              </View>)}
           </View>)
     }
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
@@ -133,6 +138,7 @@ export default function HomeScreen({route}: Props) {
       </ScrollView>
       <Button title='Lisää harjoitus'
         onPress={() => navigation.navigate('AddWorkout')} />
+      <Button title="Tyhjennä kaikki" onPress={() => clearAll()} />
     </View>
   );
 }

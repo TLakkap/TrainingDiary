@@ -14,7 +14,7 @@ interface Exercise {
 
 type Props = NativeStackScreenProps<RootStackParams, "AddWorkout">
 
-export default function AddWorkoutScreen ({route, navigation}: Props) {
+export default function AddWorkoutScreen ({navigation}: Props) {
     const renderItem = ({ item }: { item: Exercise}) => {
         return (
             <Pressable onPress={() => select(item)}>
@@ -26,7 +26,11 @@ export default function AddWorkoutScreen ({route, navigation}: Props) {
     const select = (item: Exercise) => {
         const classification = item.classification
         const exercises = item.exercises
-        navigation.navigate('GymExercises', {exercises, classification})
+        if(classification === "Kuntosali"){
+            navigation.navigate('GymExercises', {exercises, classification})
+        } else {
+            console.log(classification)
+        }
     }
 
     return(

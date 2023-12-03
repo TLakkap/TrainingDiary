@@ -3,14 +3,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface Workout {
   id: string;
   workout: string;
-  time: string;
   comments: string;
   details: {
     gymExercise: string | undefined
-    weights: number | undefined
-    reps: number | undefined
-    sets: number | undefined
-} | undefined
+    gymExerciseDetails: {
+      weights: string
+      reps: string
+    }[]
+  }
 }
 
 export const storeData = async (date: string, newWorkout: Workout): Promise<void> => {
@@ -52,3 +52,13 @@ export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> 
       return null;
       }
   }
+
+export const clearAll = async () => {
+  try {
+    await AsyncStorage.clear()
+  } catch(e) {
+    console.log(e)
+  }
+
+  console.log('Done.')
+}

@@ -9,11 +9,12 @@ export type RootStackParams = {
   Login: undefined;
   Home: {
     details: {
-      gymExercise: string,
-      weights: number,
-      reps: number,
-      sets: number
-    }
+      gymExercise: string | undefined
+      gymExerciseDetails: {
+        weights: string
+        reps: string
+      }[]
+  } | undefined
     classification: string
   }
   AddWorkout: undefined
