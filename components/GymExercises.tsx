@@ -3,14 +3,10 @@ import { FlatList, Text, View, Button, Pressable, Modal, TextInput } from 'react
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 
-/* interface Exercise {
-    id: string
-    classification: string
-    exercises: {
-        id: string
-        exercise: string
-    }[]
-} */
+interface ExerciseItem {
+    id: string;
+    exercise: string;
+}
 
 type Props = NativeStackScreenProps<RootStackParams, "GymExercises">
 
@@ -23,13 +19,13 @@ export default function GymExercises ({route, navigation}: Props) {
     const [weights, setWeights] = useState('')
     const [reps, setReps] = useState('')
 
-    const select = (item) => {
+    const select = (item: {id: string, exercise: string}) => {
         setSelectedId(item.id)
         setSelectedExercise(item.exercise)
         setModalVisible(true)
     }
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item }: {item: ExerciseItem}) => {
         return (
             <Pressable onPress={() => select(item)}>
                 <Text>{item.exercise}</Text>

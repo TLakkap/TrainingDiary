@@ -31,6 +31,15 @@ export const storeData = async (date: string, newWorkout: Workout): Promise<void
     }
   };
 
+export const updateData = async (date: string, updatedWorkouts: Workout[]): Promise<void> => {
+  try {
+    const jsonWorkouts = JSON.stringify(updatedWorkouts);
+    await AsyncStorage.setItem(date, jsonWorkouts);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> => {
     try {
       const res = await AsyncStorage.getItem(dateToRetrieve)

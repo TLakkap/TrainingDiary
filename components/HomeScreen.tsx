@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { storeData, getData, clearAll } from '../workoutStorage'
+import { storeData, getData, clearAll, updateData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
@@ -78,6 +78,7 @@ export default function HomeScreen({route}: Props) {
 
   useEffect(() => {  // storing new workout
     if (route.params?.details) {  // checking if there are details parameters from GymExercises
+      console.log("route.params?.details:", route.params?.details)
       const workout = {
         id: generateUniqueId(),
         workout: route.params.classification,
@@ -96,25 +97,61 @@ export default function HomeScreen({route}: Props) {
   const handleStoreData = async (workout: Workout) => {
     try {
       await storeData(selectedDay, workout);
-      console.log('Treenit tallennettu onnistuneesti');
+      console.log('Workout saved');
     } catch (error) {
-      console.error('Virhe tallennuksessa:', error);
+      console.error('Save error:', error);
     }
-}
+  }
+
+  const handleUpdateData = async (updatedWorkouts: Workout[]) => {
+    try {
+      await updateData(selectedDay, updatedWorkouts);
+      console.log('Workout updated');
+    } catch (error) {
+      console.error('Update error:', error);
+    }
+  }
+
+  const deleteWorkout = async (id: string) => {
+    const findWorkout = workouts.findIndex(item => item.id === id)
+    if (findWorkout >= 0) {
+      let updatedWorkouts = [...workouts]
+      updatedWorkouts.splice(findWorkout, 1)
+      await handleUpdateData(updatedWorkouts)
+      setWorkouts(updatedWorkouts)
+    } else {
+      console.log("Invalid index")
+    }
+  }
+
+  const deleteSet = async (id: string, index: number) => {
+    const findWorkout = workouts.findIndex(item => item.id === id)
+    if (findWorkout >= 0) {
+      let updatedWorkouts = [...workouts]
+      let updatedSet = updatedWorkouts[findWorkout]
+      updatedSet.details.gymExerciseDetails.splice(index, 1)
+      updatedWorkouts[findWorkout] = updatedSet
+      await handleUpdateData(updatedWorkouts)
+      setWorkouts(updatedWorkouts)
+    } else {
+      console.log("Invalid index")
+    }
+  }
 
   const showWorkouts = () => {
     if (workouts.length !== 0 && workouts[0] !== null) {
-      console.log("wos:", workouts[0].details)
-        return workouts.map((w: Workout) => 
-          <View key={w.id}>
-            <Text>{w.workout}</Text>
-            <Text>{w.details?.gymExercise}</Text>
-            {w.details?.gymExerciseDetails?.map((d, index) => 
-              <View key={index}>
-                {d.weights !== '' && <Text>{d.weights} kg</Text>}
-                <Text>{d.reps} toistoa</Text>
-              </View>)}
-          </View>)
+      return workouts.map((w: Workout) => 
+        <View key={w.id}>
+          <Text>{w.workout}</Text>
+          <Text>{w.details?.gymExercise}</Text>
+          <Button title='Poista' onPress={() => deleteWorkout(w.id)} />
+          {w.details?.gymExerciseDetails?.map((d, index) => 
+            <View key={index}>
+              {d.weights !== '' && <Text>{d.weights} kg</Text>}
+              <Text>{d.reps} toistoa</Text>
+              <Button title='Poista' onPress={() => deleteSet(w.id, index)} />
+            </View>)}
+        </View>)
     }
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
   }
