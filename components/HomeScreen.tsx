@@ -175,7 +175,7 @@ export default function HomeScreen({route}: Props) {
       </ScrollView>
       <Button title='Lisää harjoitus'
         onPress={() => navigation.navigate('AddWorkout')} />
-      <Button title="Tyhjennä kaikki" onPress={() => clearAll()} />
+      {/* <Button title="Tyhjennä kaikki" onPress={() => clearAll()} /> */}
     </View>
   );
 }
