@@ -18,7 +18,7 @@ export default function AddWorkoutScreen ({navigation}: Props) {
     const renderItem = ({ item }: { item: Exercise}) => {
         return (
             <Pressable onPress={() => select(item)}>
-                <Text>{item.classification}</Text>
+                <Text style={{fontSize: 22, padding: 4, borderWidth: 1, borderColor: 'black'}}>{item.classification}</Text>
             </Pressable>
         )
     }

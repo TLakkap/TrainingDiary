@@ -16,6 +16,7 @@ export type RootStackParams = {
       }[]
   } | undefined
     classification: string
+    comments: string
   }
   AddWorkout: undefined
   GymExercises: {

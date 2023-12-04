@@ -4,6 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 
 interface ExerciseItem {
     id: string;
@@ -20,6 +21,7 @@ export default function GymExercises ({route, navigation}: Props) {
     const [exerciseDetails, setExerciseDetails] = useState<any[]>([])
     const [weights, setWeights] = useState('')
     const [reps, setReps] = useState('')
+    const [comments, setComments] = useState('')
     const [updateMode, setUpdateMode] = useState(false)
     const [updatedIndex, setUpdatedIndex] = useState(0)
     const [updatedWeights, setUpdatedWeights] = useState('')
@@ -34,7 +36,7 @@ export default function GymExercises ({route, navigation}: Props) {
     const renderItem = ({ item }: {item: ExerciseItem}) => {
         return (
             <Pressable onPress={() => select(item)}>
-                <Text>{item.exercise}</Text>
+                <Text style={{fontSize: 22, padding: 4, borderWidth: 1, borderColor: 'black'}}>{item.exercise}</Text>
             </Pressable>
         )
     }
@@ -52,6 +54,12 @@ export default function GymExercises ({route, navigation}: Props) {
         setUpdateMode(true)
         setUpdatedWeights(exerciseDetails[index].weights)
         setUpdatedReps(exerciseDetails[index].reps)
+    }
+
+    const deleteSet = (index: number) => {
+        let updatedSet = [...exerciseDetails]
+        updatedSet.splice(index, 1)
+        setExerciseDetails(updatedSet)
     }
 
     const handleUpdate = () => {
@@ -86,6 +94,9 @@ export default function GymExercises ({route, navigation}: Props) {
                             <Pressable onPress={() => editSet(index)}>
                                 <FontAwesomeIcon icon={ faPencil } />
                             </Pressable>
+                            <Pressable onPress={() => deleteSet(index)}>
+                                <FontAwesomeIcon icon={ faTrashCan } />
+                            </Pressable>
                             {/* <Button title="Muokkaa" onPress={() => editSet(index)} /> */}
                         </View>)}
                 </View>
@@ -108,12 +119,16 @@ export default function GymExercises ({route, navigation}: Props) {
                 </View>}
                 {!updateMode && <View>
                     <Button title="Lisää" onPress={() => addSet()} />
+                    <Text>Kommentit</Text>
+                    <TextInput 
+                        value={comments}
+                        onChangeText={text => setComments(text)}/>
                     <Button title="Tallenna" onPress={() => {
                         const details = {
                             gymExercise: selectedExercise,
                             gymExerciseDetails: exerciseDetails
                         }
-                        navigation.navigate("Home", {details, classification})
+                        navigation.navigate("Home", {details, comments, classification})
                         setModalVisible(false)
                     }} />
                 </View>}

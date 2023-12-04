@@ -84,7 +84,7 @@ export default function HomeScreen({route}: Props) {
       const workout = {
         id: generateUniqueId(),
         workout: route.params.classification,
-        comments: '',
+        comments: route.params.comments,
         details: route.params.details
       }
       handleStoreData(workout)
@@ -162,6 +162,7 @@ export default function HomeScreen({route}: Props) {
               
               {/* <Button title='Poista' onPress={() => deleteSet(w.id, index)} /> */}
             </View>)}
+          <Text>{w.comments}</Text>
         </View>)
     }
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
