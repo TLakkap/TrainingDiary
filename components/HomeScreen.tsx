@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView } from 'react-native';
+import { Text, View, Button, ScrollView, Pressable } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { storeData, getData, clearAll, updateData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,6 +8,8 @@ import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 
 interface Workout {
   id: string
@@ -142,14 +144,23 @@ export default function HomeScreen({route}: Props) {
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
-          <Text>{w.workout}</Text>
+          {/* <Text>{w.workout}</Text> */}
+          <View style={{flexDirection: 'row', margin: 2}}>
           <Text>{w.details?.gymExercise}</Text>
-          <Button title='Poista' onPress={() => deleteWorkout(w.id)} />
+          <Pressable onPress={() => deleteWorkout(w.id)}>
+                <FontAwesomeIcon icon={ faTrashCan } />
+          </Pressable>
+          </View>
+          {/* <Button title='Poista' onPress={() => deleteWorkout(w.id)} /> */}
           {w.details?.gymExerciseDetails?.map((d, index) => 
-            <View key={index}>
+            <View key={index} style={{flexDirection: 'row'}}>
               {d.weights !== '' && <Text>{d.weights} kg</Text>}
               <Text>{d.reps} toistoa</Text>
-              <Button title='Poista' onPress={() => deleteSet(w.id, index)} />
+              <Pressable onPress={() => deleteSet(w.id, index)}>
+                <FontAwesomeIcon icon={ faTrashCan } />
+              </Pressable>
+              
+              {/* <Button title='Poista' onPress={() => deleteSet(w.id, index)} /> */}
             </View>)}
         </View>)
     }

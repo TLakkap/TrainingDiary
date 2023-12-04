@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { FlatList, Text, View, Button, Pressable, Modal, TextInput } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 
 interface ExerciseItem {
     id: string;
@@ -79,9 +81,12 @@ export default function GymExercises ({route, navigation}: Props) {
                         keyboardType='numeric'
                         placeholder='toistot'/>
                     {exerciseDetails.length !== 0 && exerciseDetails.map((ed, index) =>
-                        <View>
-                            <Text key={index}>{ed.weights} kg {ed.reps} toistoa</Text>
-                            <Button title="Muokkaa" onPress={() => editSet(index)} />
+                        <View  key={index} style={{flexDirection: 'row'}}>
+                            <Text>{ed.weights} kg {ed.reps} toistoa</Text>
+                            <Pressable onPress={() => editSet(index)}>
+                                <FontAwesomeIcon icon={ faPencil } />
+                            </Pressable>
+                            {/* <Button title="Muokkaa" onPress={() => editSet(index)} /> */}
                         </View>)}
                 </View>
                 }
