@@ -26,11 +26,7 @@ export default function AddWorkoutScreen ({navigation}: Props) {
     const select = (item: Exercise) => {
         const classification = item.classification
         const exercises = item.exercises
-        if(classification === "Kuntosali"){
-            navigation.navigate('GymExercises', {exercises, classification})
-        } else {
-            console.log(classification)
-        }
+        navigation.navigate('ChooseExercise', {exercises, classification})
     }
 
     return(
