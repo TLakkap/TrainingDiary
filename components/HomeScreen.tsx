@@ -80,7 +80,6 @@ export default function HomeScreen({route}: Props) {
 
   useEffect(() => {  // storing new workout
     if (route.params?.details) {  // checking if there are details parameters from GymExercises
-      console.log("route.params?.details:", route.params?.details)
       const workout = {
         id: generateUniqueId(),
         workout: route.params.classification,
@@ -151,16 +150,13 @@ export default function HomeScreen({route}: Props) {
                 <FontAwesomeIcon icon={ faTrashCan } />
           </Pressable>
           </View>
-          {/* <Button title='Poista' onPress={() => deleteWorkout(w.id)} /> */}
           {w.details?.gymExerciseDetails?.map((d, index) => 
             <View key={index} style={{flexDirection: 'row'}}>
-              {d.weights !== '' && <Text>{d.weights} kg</Text>}
-              <Text>{d.reps} toistoa</Text>
+              {d.weights !== '' && <Text style={{fontSize: 16}}>{d.weights} kg</Text>}
+              <Text style={{fontSize: 16}}> {d.reps} toistoa </Text>
               <Pressable onPress={() => deleteSet(w.id, index)}>
                 <FontAwesomeIcon icon={ faTrashCan } />
               </Pressable>
-              
-              {/* <Button title='Poista' onPress={() => deleteSet(w.id, index)} /> */}
             </View>)}
           <Text>{w.comments}</Text>
         </View>)
@@ -181,7 +177,7 @@ export default function HomeScreen({route}: Props) {
         firstDay={1}  // Week starts from Monday
         onDayPress={(day) => handleDayChange(day.dateString)}
       />
-      <Text>{selectedDay}</Text>
+      <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'lightgreen', padding: 2}}>{selectedDay}</Text>
       <ScrollView>
         {showWorkouts()}
       </ScrollView>

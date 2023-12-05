@@ -5,6 +5,7 @@ import HomeScreen from './components/HomeScreen'
 import AddWorkoutScreen from './components/AddWorkoutScreen'
 import ChooseExerciseScreen from './components/ChooseExerciseScreen'
 import WorkoutDetailsScreen from './components/WorkoutDetailsScreen'
+import EditWorkoutScreen from './components/EditWorkoutScreen'
 
 export type RootStackParams = {
   Login: undefined;
@@ -30,6 +31,17 @@ export type RootStackParams = {
   WorkoutDetails: {
     exercise: string
     classification: string
+    updatedSet: {
+      weights: string
+      reps: string
+    }[]
+  }
+  EditWorkout: {
+    index: number
+    updatedSet: {
+      weights: string
+      reps: string
+    }[]
   }
 }
 
@@ -39,11 +51,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <RootStack.Navigator initialRouteName='Login'>
-        <RootStack.Screen name='Login' component={LoginScreen} />
-        <RootStack.Screen name='Home' component={HomeScreen} />
-        <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
-        <RootStack.Screen name='ChooseExercise' component={ChooseExerciseScreen} />
-        <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} />
+          <RootStack.Screen name='Login' component={LoginScreen} />
+          <RootStack.Screen name='Home' component={HomeScreen} />
+          <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
+          <RootStack.Screen name='ChooseExercise' component={ChooseExerciseScreen} />
+          <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} />
+          <RootStack.Screen name='EditWorkout' component={EditWorkoutScreen} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
