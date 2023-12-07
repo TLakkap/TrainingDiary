@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable } from 'react-native';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
+import CalendarPicker from 'react-native-calendar-picker'
 import { storeData, getData, clearAll, updateData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -30,29 +30,8 @@ export default function HomeScreen({route}: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [selectedDay, setSelectedDay] = useState('')
   const [workouts, setWorkouts] = useState<Workout[]>([])
-
-  // Calendar language to Finnish
-  LocaleConfig.locales['fi'] = {
-    monthNames: [
-      'Tammikuu',
-      'Helmikuu',
-      'Maaliskuu',
-      'Huhtikuu',
-      'Toukokuu',
-      'Kesäkuu',
-      'Heinäkuu',
-      'Elokuu',
-      'Syyskuu',
-      'Lokakuu',
-      'Marraskuu',
-      'Joulukuu'
-    ],
-    monthNamesShort: ['Tammi', 'Helmi', 'Maalis', 'Huhti', 'Touko', 'Kesä', 'Heinä', 'Elo', 'Syys', 'Loka', 'Marras', 'Joulu'],
-    dayNames: ['Sunnuntai', 'Maanantai', 'Tiistai', 'Keskiviiko', 'Torstai', 'Perjantai', 'Lauantai'],
-    dayNamesShort: ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'],
-    today: "Tänään"
-  };
-  LocaleConfig.defaultLocale = 'fi';
+  const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu']
+  const dayNamesShort = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
 
   useEffect(() => {     // Set today to selected day
     const today = new Date(); // Get this date
@@ -173,9 +152,13 @@ export default function HomeScreen({route}: Props) {
 
   return (
     <View style={{ flex: 1 }}>
-      <Calendar 
-        firstDay={1}  // Week starts from Monday
-        onDayPress={(day) => handleDayChange(day.dateString)}
+      <CalendarPicker 
+        onDateChange={(day) => handleDayChange(day.toString())}
+        startFromMonday={true}
+        weekdays={dayNamesShort}
+        months={monthNames}
+        previousTitle='Edellinen'
+        nextTitle='Seuraava'
       />
       <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'lightgreen', padding: 2}}>{selectedDay}</Text>
       <ScrollView>
