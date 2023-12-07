@@ -2,7 +2,7 @@ import CalendarPicker from 'react-native-calendar-picker'
 
 interface CalendarProps {
     handleDayChange: (day: string) => void;
-    monthlyWorkouts: { date: string; workouts: string[]; }[];
+    monthlyWorkouts: { date: string; monthWorkouts: string[]; }[];
     setSelectedMonth: (month: number) => void
   }
 
@@ -13,8 +13,8 @@ export default function Calendar({ handleDayChange, monthlyWorkouts, setSelected
     const customDatesStyles: {date: string, style: {backgroundColor: string}, textStyle: {color: string}}[] = [];
   
     monthlyWorkouts.forEach(entry => {
-        const hasCardio = entry.workouts.includes('Cardio');
-        const hasKuntosali = entry.workouts.includes('Kuntosali');
+        const hasCardio = entry.monthWorkouts.includes('Cardio');
+        const hasKuntosali = entry.monthWorkouts.includes('Kuntosali');
 
         let backgroundColor = '#FFFFFF'; // Default background color
 

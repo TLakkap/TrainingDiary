@@ -1,6 +1,7 @@
 import { FlatList, Text, View, Button, Pressable, Modal, TextInput } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
+import StyleSheet from '../Styles'
 
 interface ExerciseItem {
     id: string;
@@ -15,7 +16,7 @@ export default function ChooseExerciseScreen ({route, navigation}: Props) {
     const renderItem = ({ item }: {item: ExerciseItem}) => {
         return (
             <Pressable onPress={() => select(item)}>
-                <Text style={{fontSize: 22, padding: 4, borderWidth: 1, borderColor: 'black'}}>{item.exercise}</Text>
+                <Text style={StyleSheet.flatlistElement}>{item.exercise}</Text>
             </Pressable>
         )
     }

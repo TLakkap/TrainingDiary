@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import Calendar from './Calendar';
 import StyleSheet from '../Styles'
-import Styles from '../Styles';
 
 interface Workout {
   id: string
@@ -18,7 +17,7 @@ interface Workout {
   details: {
       kms: string | undefined
       time: string | undefined
-      gymExercise: string | undefined
+      gymExercise: string
       gymExerciseDetails: {
         weights: string | undefined
         reps: string | undefined
@@ -29,14 +28,13 @@ interface Workout {
 type Props = NativeStackScreenProps<RootStackParams, "Home">
 
 export default function HomeScreen({route, navigation}: Props) {
-  //const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [date, setDate] = useState('')
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedMonth, setSelectedMonth] = useState(0)
   const [selectedYear, setSelectedYear] = useState(0)
   const [workouts, setWorkouts] = useState<Workout[]>([])
-  const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; workouts: string[]; }[]>([])
-  const [showDetails, setShowDetails] = useState(false)
+  const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; monthWorkouts: string[]; }[]>([])
+  const [showDetails, setShowDetails] = useState<string>()
 
 
   useEffect(() => {     // Set today to selected day
@@ -69,7 +67,7 @@ export default function HomeScreen({route, navigation}: Props) {
           if (response) {
             const workoutsByDate = Object.keys(response).map(date => ({
               date,
-              workouts: response[date].map(workout => workout.workout)
+              monthWorkouts: response[date].map(workout => workout.workout)
             }))
             setMonthlyWorkouts(workoutsByDate);
           } else {
@@ -144,27 +142,37 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
+  const handleWorkoutPress = (pressedWorkout: string) => {
+    if (pressedWorkout === showDetails) {
+      setShowDetails('')
+    } else {
+      setShowDetails(pressedWorkout)
+    }
+  }
+
   const showWorkouts = () => {
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
-          {/* <Text>{w.workout}</Text> */}
           <View style={StyleSheet.workoutHeader}>
-            <Pressable onPress={() => setShowDetails(!showDetails)}>
+            <Pressable onPress={() => handleWorkoutPress(w.details.gymExercise)}>
               <Text style={StyleSheet.workoutHeaderText}>{w.details?.gymExercise}</Text>
             </Pressable>
             <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(w.id)}>
                   <FontAwesomeIcon size={22} icon={ faTrashCan } />
             </Pressable>
           </View>
-          <View style={StyleSheet.listElement}>
+          {showDetails === w.details.gymExercise && (
+          <View style={(w.details.kms !== '0' || w.details.time !== '0') ? StyleSheet.listElement : null}>
             {w.details.kms !== '0' && <Text>{w.details.kms} km</Text>}
             {w.details.time !== '0' && <Text>{w.details.time} min</Text>}
-            {w.details.kms !== '0' && w.details.time !== '0' && <Pressable onPress={() => console.log("Tähän logiikka")}>
+            {w.details.kms !== '0' && w.details.time !== '0' && 
+              <Pressable onPress={() => console.log("Tähän logiikka")}>
                 <FontAwesomeIcon icon={ faTrashCan } />
-            </Pressable>}
-          </View>
-          {showDetails && <View>
+              </Pressable>
+            }
+          </View>)}
+          {showDetails === w.details.gymExercise && <View>
           {w.details?.gymExerciseDetails?.map((d, index) => 
             <View key={index} style={StyleSheet.listElement}>
               {d.weights !== '' && <Text style={{fontSize: 16}}>{d.weights} kg</Text>}
@@ -173,7 +181,7 @@ export default function HomeScreen({route, navigation}: Props) {
                 <FontAwesomeIcon icon={ faTrashCan } />
               </Pressable>
             </View>)}
-          {w.comments !== '' && <Text>{w.comments}</Text>}
+          {w.comments !== '' && <Text style={StyleSheet.comments}>{w.comments}</Text>}
           </View>}
         </View>)
     }
@@ -198,8 +206,10 @@ export default function HomeScreen({route, navigation}: Props) {
       <ScrollView>
         {showWorkouts()}
       </ScrollView>
-      <Button title='Lisää harjoitus'
-        onPress={() => navigation.navigate('AddWorkout')} />
+      <Pressable style={StyleSheet.pressableButton}
+        onPress={() => navigation.navigate('AddWorkout')}>
+          <Text style={StyleSheet.pressableText}>+</Text>
+      </Pressable>
     </View>
   );
 }

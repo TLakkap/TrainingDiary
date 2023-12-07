@@ -7,7 +7,7 @@ interface Workout {
   details: {
       kms: string | undefined
       time: string | undefined
-      gymExercise: string | undefined
+      gymExercise: string
       gymExerciseDetails: {
         weights: string | undefined
         reps: string | undefined
