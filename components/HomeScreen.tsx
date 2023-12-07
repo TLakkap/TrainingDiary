@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker'
-import { storeData, getData, updateData } from '../workoutStorage'
+import { storeData, getData, updateData, getWorkoutsForMonth } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
@@ -28,25 +28,26 @@ type Props = NativeStackScreenProps<RootStackParams, "Home">
 
 export default function HomeScreen({route}: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+  const [date, setDate] = useState('')
   const [selectedDay, setSelectedDay] = useState('')
+  const [selectedMonth, setSelectedMonth] = useState(0)
+  const [selectedYear, setSelectedYear] = useState(0)
   const [workouts, setWorkouts] = useState<Workout[]>([])
+  const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; workouts: string[]; }[]>([])
   const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu']
   const dayNamesShort = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
 
   useEffect(() => {     // Set today to selected day
-    const today = new Date(); // Get this date
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // Months start from index 0
-    const day = today.getDate();
-    
-    const formattedDate = `${day}.${month}.${year}`
-    setSelectedDay(formattedDate);    
+      if(date === ''){
+        const today = new Date()
+        handleDayChange(today.toString())
+      }
   }, []);
 
   useEffect(() => {   //get workouts for the selected day
     const getWorkouts = async () => {
-      if (selectedDay !== null){
-        const response = await getData(selectedDay)
+      if (date !== null){
+        const response = await getData(date)
         if (response) {
           setWorkouts([])
           setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
@@ -55,7 +56,31 @@ export default function HomeScreen({route}: Props) {
         }
     }}
     getWorkouts()
-  }, [selectedDay])  // gets new workouts for the day everytime the selectedDay is changed
+  }, [date])  // gets new workouts for the day everytime the date is changed
+
+  useEffect(() => {   //get workouts for the selected month
+    const getWorkouts = async () => {
+      if (selectedMonth !== 0){
+        try {
+
+          const response = await getWorkoutsForMonth(selectedMonth, selectedYear);
+          if (response) {
+            const workoutsByDate = Object.keys(response).map(date => ({
+              date,
+              workouts: response[date].map(workout => workout.workout)
+            }));
+            console.log("Tul:", workoutsByDate)
+            setMonthlyWorkouts(workoutsByDate);
+          } else {
+            console.log("No response");
+          }
+        }
+        catch (error) {
+          console.error("Error fetching workouts:", error);
+        }
+    }}
+    getWorkouts()
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {  // storing new workout
     if (route.params?.details) {  // checking if there are details parameters from GymExercises
@@ -76,7 +101,7 @@ export default function HomeScreen({route}: Props) {
 
   const handleStoreData = async (workout: Workout) => {
     try {
-      await storeData(selectedDay, workout);
+      await storeData(date, workout);
       console.log('Workout saved');
     } catch (error) {
       console.error('Save error:', error);
@@ -85,7 +110,7 @@ export default function HomeScreen({route}: Props) {
 
   const handleUpdateData = async (updatedWorkouts: Workout[]) => {
     try {
-      await updateData(selectedDay, updatedWorkouts);
+      await updateData(date, updatedWorkouts);
       console.log('Workout updated');
     } catch (error) {
       console.error('Update error:', error);
@@ -145,15 +170,41 @@ export default function HomeScreen({route}: Props) {
 
   const handleDayChange = (day: string) => {
     const parsedDate = new Date(day); // parse date from string
+    setDate(parsedDate.toISOString().split('T')[0])
     const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;
-
     setSelectedDay(formattedDate)
+    setSelectedMonth(parsedDate.getMonth() + 1)  // Months start from index 0
+    setSelectedYear(parsedDate.getFullYear())
   }
+
+  const customDatesStyles: {date: string, style: {backgroundColor: string}, textStyle: {color: string}}[] = [];
+  
+  monthlyWorkouts.forEach(entry => {
+    const hasCardio = entry.workouts.includes('Cardio');
+    const hasKuntosali = entry.workouts.includes('Kuntosali');
+
+    let backgroundColor = '#FFFFFF'; // Default background color
+
+    if (hasCardio && hasKuntosali) {
+      backgroundColor = '#FFD700'; // Yellow for both Cardio and Kuntosali
+    } else if (hasCardio) {
+      backgroundColor = '#ADD8E6'; // Blue for Cardio
+    } else if (hasKuntosali) {
+      backgroundColor = '#FF0000'; // Red for Kuntosali
+    }
+
+    customDatesStyles.push({
+      date: entry.date,
+      style: { backgroundColor },
+      textStyle: { color: 'black' } // Text color can be set if needed
+    });
+  });
 
   return (
     <View style={{ flex: 1 }}>
       <CalendarPicker 
         onDateChange={(day) => handleDayChange(day.toString())}
+        customDatesStyles={customDatesStyles}
         startFromMonday={true}
         weekdays={dayNamesShort}
         months={monthNames}

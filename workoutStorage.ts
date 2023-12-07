@@ -13,6 +13,29 @@ interface Workout {
   }
 }
 
+export const getWorkoutsForMonth = async (month: number, year: number) => {
+  try {
+    const workoutsForMonth: { [date: string]: Workout[] } = {};
+
+    const startDate = new Date(year, month - 1, 1); // Months start from index 0
+    const endDate = new Date(year, month, 0);
+
+    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+      const dateString = date.toISOString().split('T')[0];
+      const workouts = await getData(dateString);
+
+      if (workouts) {
+        workoutsForMonth[dateString] = workouts;
+      }
+    }
+
+    return workoutsForMonth;
+  } catch (error) {
+    console.error('Error fetching workouts for month:', error);
+    return {};
+  }
+};
+
 export const storeData = async (date: string, newWorkout: Workout): Promise<void> => {
     try {
       let existingWorkouts: Workout[] = []
@@ -53,7 +76,7 @@ export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> 
           return null;
         }
       } else {
-        console.log('Data is null or undefined.');
+        //console.log('Data is null or undefined.');
         return null;
       }
     } catch (error) {
