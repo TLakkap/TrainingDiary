@@ -61,13 +61,3 @@ export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> 
       return null;
       }
   }
-
-export const clearAll = async () => {
-  try {
-    await AsyncStorage.clear()
-  } catch(e) {
-    console.log(e)
-  }
-
-  console.log('Done.')
-}

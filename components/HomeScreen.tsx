@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker'
-import { storeData, getData, clearAll, updateData } from '../workoutStorage'
+import { storeData, getData, updateData } from '../workoutStorage'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
@@ -159,6 +159,8 @@ export default function HomeScreen({route}: Props) {
         months={monthNames}
         previousTitle='Edellinen'
         nextTitle='Seuraava'
+        selectMonthTitle='Valitse kuukausi vuodelta '
+        selectYearTitle='Valitse vuosi'
       />
       <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'lightgreen', padding: 2}}>{selectedDay}</Text>
       <ScrollView>
@@ -166,7 +168,6 @@ export default function HomeScreen({route}: Props) {
       </ScrollView>
       <Button title='Lisää harjoitus'
         onPress={() => navigation.navigate('AddWorkout')} />
-      {/* <Button title="Tyhjennä kaikki" onPress={() => clearAll()} /> */}
     </View>
   );
 }
