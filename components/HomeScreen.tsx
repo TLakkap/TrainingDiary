@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable } from 'react-native';
-import CalendarPicker from 'react-native-calendar-picker'
 import { storeData, getData, updateData, getWorkoutsForMonth } from '../workoutStorage'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+//import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+//import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
+import Calendar from './Calendar';
 
 interface Workout {
   id: string
@@ -26,16 +26,14 @@ interface Workout {
 
 type Props = NativeStackScreenProps<RootStackParams, "Home">
 
-export default function HomeScreen({route}: Props) {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+export default function HomeScreen({route, navigation}: Props) {
+  //const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [date, setDate] = useState('')
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedMonth, setSelectedMonth] = useState(0)
   const [selectedYear, setSelectedYear] = useState(0)
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; workouts: string[]; }[]>([])
-  const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu']
-  const dayNamesShort = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
 
   useEffect(() => {     // Set today to selected day
       if(date === ''){
@@ -68,15 +66,14 @@ export default function HomeScreen({route}: Props) {
             const workoutsByDate = Object.keys(response).map(date => ({
               date,
               workouts: response[date].map(workout => workout.workout)
-            }));
-            console.log("Tul:", workoutsByDate)
+            }))
             setMonthlyWorkouts(workoutsByDate);
           } else {
-            console.log("No response");
+            console.log("No response")
           }
         }
         catch (error) {
-          console.error("Error fetching workouts:", error);
+          console.error("Error fetching workouts:", error)
         }
     }}
     getWorkouts()
@@ -177,42 +174,9 @@ export default function HomeScreen({route}: Props) {
     setSelectedYear(parsedDate.getFullYear())
   }
 
-  const customDatesStyles: {date: string, style: {backgroundColor: string}, textStyle: {color: string}}[] = [];
-  
-  monthlyWorkouts.forEach(entry => {
-    const hasCardio = entry.workouts.includes('Cardio');
-    const hasKuntosali = entry.workouts.includes('Kuntosali');
-
-    let backgroundColor = '#FFFFFF'; // Default background color
-
-    if (hasCardio && hasKuntosali) {
-      backgroundColor = '#FFD700'; // Yellow for both Cardio and Kuntosali
-    } else if (hasCardio) {
-      backgroundColor = '#ADD8E6'; // Blue for Cardio
-    } else if (hasKuntosali) {
-      backgroundColor = '#FF0000'; // Red for Kuntosali
-    }
-
-    customDatesStyles.push({
-      date: entry.date,
-      style: { backgroundColor },
-      textStyle: { color: 'black' } // Text color can be set if needed
-    });
-  });
-
   return (
     <View style={{ flex: 1 }}>
-      <CalendarPicker 
-        onDateChange={(day) => handleDayChange(day.toString())}
-        customDatesStyles={customDatesStyles}
-        startFromMonday={true}
-        weekdays={dayNamesShort}
-        months={monthNames}
-        previousTitle='Edellinen'
-        nextTitle='Seuraava'
-        selectMonthTitle='Valitse kuukausi vuodelta '
-        selectYearTitle='Valitse vuosi'
-      />
+      <Calendar handleDayChange={handleDayChange} monthlyWorkouts={monthlyWorkouts} setSelectedMonth={setSelectedMonth} />
       <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'lightgreen', padding: 2}}>{selectedDay}</Text>
       <ScrollView>
         {showWorkouts()}
