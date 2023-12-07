@@ -1,15 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Workout {
-  id: string;
-  workout: string;
-  comments: string;
+  id: string
+  workout: string
+  comments: string
   details: {
-    gymExercise: string | undefined
-    gymExerciseDetails: {
-      weights: string
-      reps: string
-    }[]
+      kms: string | undefined
+      time: string | undefined
+      gymExercise: string | undefined
+      gymExerciseDetails: {
+        weights: string | undefined
+        reps: string | undefined
+      }[] | undefined
   }
 }
 

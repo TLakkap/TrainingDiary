@@ -15,6 +15,8 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     const [weights, setWeights] = useState('')
     const [reps, setReps] = useState('')
     const [comments, setComments] = useState('')
+    const [kms, setKms] = useState('0')
+    const [time, setTime] = useState('0')
 
     useEffect(() => {
         if (route.params?.updatedSet) {
@@ -44,10 +46,10 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         setExerciseDetails(updatedSet)
     }
 
-    return(
-        <View>
-            <Text>{exercise}</Text>
-            <Text>Painot kg</Text>
+    const gymDetails = () => {
+        return(
+            <View>
+                <Text>Painot kg</Text>
             <TextInput
                 value={weights}
                 onChangeText={text => setWeights(text)}
@@ -75,13 +77,75 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
             <TextInput 
                 value={comments}
                 onChangeText={text => setComments(text)}/>
-            <Button title="Tallenna" onPress={() => {
+            {/* <Button title="Tallenna" onPress={() => {
                 const details = {
+                    kms: '',
+                    time: '',
                     gymExercise: exercise,
                     gymExerciseDetails: exerciseDetails
                 }
                 navigation.navigate("Home", {details, comments, classification})
-            }} />
+            }} /> */}
+            </View>
+        )
+    }
+
+    const cardioDetails = () => {
+        return(
+            <View>
+                <Text>Matka (km)</Text>
+            <TextInput
+                value={kms}
+                onChangeText={text => setKms(text)}
+                keyboardType='numeric'
+                placeholder='km'/>
+            <Text>Aika (min)</Text>
+            <TextInput
+                value={time}
+                onChangeText={text => setTime(text)}
+                keyboardType='numeric'
+                placeholder='minutes'/>
+            <Text>Kommentit</Text>
+            <TextInput 
+                value={comments}
+                onChangeText={text => setComments(text)}/>
+            </View>
+        )
+    }
+
+    const stretchDetails = () => {
+        return(
+            <View>
+            <Text>Aika (min)</Text>
+            <TextInput
+                value={time}
+                onChangeText={text => setTime(text)}
+                keyboardType='numeric'
+                placeholder='minutes'/>
+            <Text>Kommentit</Text>
+            <TextInput 
+                value={comments}
+                onChangeText={text => setComments(text)}/>
+            </View>
+        )
+    }
+
+    return(
+        <View>
+            <Text>{exercise}</Text>
+            {classification === "Kuntosali" && gymDetails()}
+            {classification === "Cardio" && cardioDetails()}
+            {classification === "Muu" && cardioDetails()}
+            {classification === "Kehonhuolto" && stretchDetails()}
+            <Button title="Tallenna" onPress={() => {
+                const details = {
+                    kms: kms,
+                    time: time,
+                    gymExercise: exercise,
+                    gymExerciseDetails: exerciseDetails
+                }
+                navigation.navigate("Home", {details, comments, classification})
+            }} /> 
         </View>
     )
 }

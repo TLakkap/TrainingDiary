@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable } from 'react-native';
 import { storeData, getData, updateData, getWorkoutsForMonth } from '../workoutStorage'
-//import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-//import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
@@ -10,17 +8,21 @@ import { v4 as uuidv4 } from 'uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import Calendar from './Calendar';
+import StyleSheet from '../Styles'
+import Styles from '../Styles';
 
 interface Workout {
   id: string
   workout: string
   comments: string
   details: {
+      kms: string | undefined
+      time: string | undefined
       gymExercise: string | undefined
       gymExerciseDetails: {
-        weights: string
-        reps: string
-      }[]
+        weights: string | undefined
+        reps: string | undefined
+      }[] | undefined
   }
 }
 
@@ -34,6 +36,8 @@ export default function HomeScreen({route, navigation}: Props) {
   const [selectedYear, setSelectedYear] = useState(0)
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; workouts: string[]; }[]>([])
+  const [showDetails, setShowDetails] = useState(false)
+
 
   useEffect(() => {     // Set today to selected day
       if(date === ''){
@@ -131,7 +135,7 @@ export default function HomeScreen({route, navigation}: Props) {
     if (findWorkout >= 0) {
       let updatedWorkouts = [...workouts]
       let updatedSet = updatedWorkouts[findWorkout]
-      updatedSet.details.gymExerciseDetails.splice(index, 1)
+      updatedSet.details.gymExerciseDetails?.splice(index, 1)
       updatedWorkouts[findWorkout] = updatedSet
       await handleUpdateData(updatedWorkouts)
       setWorkouts(updatedWorkouts)
@@ -145,21 +149,32 @@ export default function HomeScreen({route, navigation}: Props) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
           {/* <Text>{w.workout}</Text> */}
-          <View style={{flexDirection: 'row', margin: 2}}>
-          <Text>{w.details?.gymExercise}</Text>
-          <Pressable onPress={() => deleteWorkout(w.id)}>
-                <FontAwesomeIcon icon={ faTrashCan } />
-          </Pressable>
+          <View style={StyleSheet.workoutHeader}>
+            <Pressable onPress={() => setShowDetails(!showDetails)}>
+              <Text style={StyleSheet.workoutHeaderText}>{w.details?.gymExercise}</Text>
+            </Pressable>
+            <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(w.id)}>
+                  <FontAwesomeIcon size={22} icon={ faTrashCan } />
+            </Pressable>
           </View>
+          <View style={StyleSheet.listElement}>
+            {w.details.kms !== '0' && <Text>{w.details.kms} km</Text>}
+            {w.details.time !== '0' && <Text>{w.details.time} min</Text>}
+            {w.details.kms !== '0' && w.details.time !== '0' && <Pressable onPress={() => console.log("Tähän logiikka")}>
+                <FontAwesomeIcon icon={ faTrashCan } />
+            </Pressable>}
+          </View>
+          {showDetails && <View>
           {w.details?.gymExerciseDetails?.map((d, index) => 
-            <View key={index} style={{flexDirection: 'row'}}>
+            <View key={index} style={StyleSheet.listElement}>
               {d.weights !== '' && <Text style={{fontSize: 16}}>{d.weights} kg</Text>}
               <Text style={{fontSize: 16}}> {d.reps} toistoa </Text>
               <Pressable onPress={() => deleteSet(w.id, index)}>
                 <FontAwesomeIcon icon={ faTrashCan } />
               </Pressable>
             </View>)}
-          <Text>{w.comments}</Text>
+          {w.comments !== '' && <Text>{w.comments}</Text>}
+          </View>}
         </View>)
     }
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
@@ -175,9 +190,11 @@ export default function HomeScreen({route, navigation}: Props) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Calendar handleDayChange={handleDayChange} monthlyWorkouts={monthlyWorkouts} setSelectedMonth={setSelectedMonth} />
-      <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'lightgreen', padding: 2}}>{selectedDay}</Text>
+    <View style={StyleSheet.container}>
+      <View style={StyleSheet.calendar}>
+        <Calendar handleDayChange={handleDayChange} monthlyWorkouts={monthlyWorkouts} setSelectedMonth={setSelectedMonth} />
+      </View>
+      <Text style={StyleSheet.day}>{selectedDay}</Text>
       <ScrollView>
         {showWorkouts()}
       </ScrollView>

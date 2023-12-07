@@ -39,9 +39,10 @@ export default function Calendar({ handleDayChange, monthlyWorkouts, setSelected
     }
 
     return(
-        <CalendarPicker 
+        <CalendarPicker
             onDateChange={(day) => handleDayChange(day.toString())}
             onMonthChange={(date) => handleMonthChange(date.toString())}
+            selectedDayStyle={{borderColor: 'black', borderWidth: 3}}
             customDatesStyles={customDatesStyles}
             startFromMonday={true}
             weekdays={dayNamesShort}
