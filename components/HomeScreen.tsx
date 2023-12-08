@@ -7,6 +7,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
+import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import Calendar from './Calendar';
 import StyleSheet from '../Styles'
 
@@ -36,7 +37,6 @@ export default function HomeScreen({route, navigation}: Props) {
   const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; monthWorkouts: string[]; }[]>([])
   const [showDetails, setShowDetails] = useState<string>()
 
-
   useEffect(() => {     // Set today to selected day
       if(date === ''){
         const today = new Date()
@@ -62,7 +62,6 @@ export default function HomeScreen({route, navigation}: Props) {
     const getWorkouts = async () => {
       if (selectedMonth !== 0){
         try {
-
           const response = await getWorkoutsForMonth(selectedMonth, selectedYear);
           if (response) {
             const workoutsByDate = Object.keys(response).map(date => ({
@@ -150,39 +149,53 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
+  const workoutHeader = (details, id) => (
+    <View style={StyleSheet.workoutHeader}>
+      <Pressable onPress={() => handleWorkoutPress(details.gymExercise)}>
+              <Text style={StyleSheet.workoutHeaderText}>{details.gymExercise}</Text>
+            </Pressable>
+            <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
+                  <FontAwesomeIcon size={22} icon={ faTrashCan } />
+            </Pressable>
+    </View>
+  )
+
+  const showCardio = (details) => (
+    <View style={(details.kms !== '0' || details.time !== '0') ? StyleSheet.listElement : null}>
+      {details.kms !== '0' && <Text>{details.kms} km</Text>}
+      {details.time !== '0' && <Text>{details.time} min</Text>}
+      {/* {details.kms !== '0' && details.time !== '0' && 
+          <Pressable onPress={() => console.log("Muokkaustila")}>
+                  <FontAwesomeIcon icon={ faPencil } />
+                </Pressable>
+                } */}
+    </View>
+  )
+
+  const showGym = (d, index, id) => (
+    <View key={index} style={StyleSheet.listElement}>
+      {d.weights !== '' && <Text> {d.weights} kg</Text>}
+      {d.reps !== '' && <Text> {d.reps} toistoa </Text>}
+      <Pressable onPress={() => deleteSet(id, index)}>
+        <FontAwesomeIcon icon={ faTrashCan } />
+      </Pressable>
+    </View>
+  )
+
   const showWorkouts = () => {
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
-          <View style={StyleSheet.workoutHeader}>
-            <Pressable onPress={() => handleWorkoutPress(w.details.gymExercise)}>
-              <Text style={StyleSheet.workoutHeaderText}>{w.details?.gymExercise}</Text>
-            </Pressable>
-            <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(w.id)}>
-                  <FontAwesomeIcon size={22} icon={ faTrashCan } />
-            </Pressable>
-          </View>
-          {showDetails === w.details.gymExercise && (
-          <View style={(w.details.kms !== '0' || w.details.time !== '0') ? StyleSheet.listElement : null}>
-            {w.details.kms !== '0' && <Text>{w.details.kms} km</Text>}
-            {w.details.time !== '0' && <Text>{w.details.time} min</Text>}
-            {w.details.kms !== '0' && w.details.time !== '0' && 
-              <Pressable onPress={() => console.log("Tähän logiikka")}>
-                <FontAwesomeIcon icon={ faTrashCan } />
-              </Pressable>
+          {workoutHeader(w.details, w.id)}
+            {showDetails === w.details.gymExercise &&
+              <View>
+                {showCardio(w.details)}
+                {w.details.gymExerciseDetails?.map((d, index) =>
+                  showGym(d, index, w.id)
+                )}
+                <Text style={StyleSheet.comments}>{w.comments}</Text>
+              </View>
             }
-          </View>)}
-          {showDetails === w.details.gymExercise && <View>
-          {w.details?.gymExerciseDetails?.map((d, index) => 
-            <View key={index} style={StyleSheet.listElement}>
-              {d.weights !== '' && <Text style={{fontSize: 16}}>{d.weights} kg</Text>}
-              <Text style={{fontSize: 16}}> {d.reps} toistoa </Text>
-              <Pressable onPress={() => deleteSet(w.id, index)}>
-                <FontAwesomeIcon icon={ faTrashCan } />
-              </Pressable>
-            </View>)}
-          {w.comments !== '' && <Text style={StyleSheet.comments}>{w.comments}</Text>}
-          </View>}
         </View>)
     }
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
@@ -209,7 +222,7 @@ export default function HomeScreen({route, navigation}: Props) {
       <View style={{alignItems: 'center'}}>
         <Pressable style={StyleSheet.pressableButton}
           onPress={() => navigation.navigate('AddWorkout')}>
-            <Text style={StyleSheet.pressableText}>+</Text>
+            <Text style={StyleSheet.pressableText}>Lisää harjoitus</Text>
         </Pressable>
       </View>
     </View>

@@ -53,14 +53,8 @@ export default function App() {
   return (
     <NavigationContainer >
       <RootStack.Navigator initialRouteName='Login' 
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#008000',
-          },
-          headerTintColor: '#ffffff',
-          headerTitleStyle: {
-          fontWeight: 'bold',
-          },
+        screenOptions={{ headerStyle: { backgroundColor: '#008000' }, headerTintColor: '#ffffff',
+          headerTitleStyle: { fontWeight: 'bold' }
         }}>
           <RootStack.Screen name='Login' component={LoginScreen} />
           <RootStack.Screen name='Home' component={HomeScreen} />
@@ -72,12 +66,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-/* const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-}); */

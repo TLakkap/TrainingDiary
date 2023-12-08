@@ -100,14 +100,14 @@ export default StyleSheet.create({
       pressableButton: {
         backgroundColor: '#d6eadf',
         borderColor: '#008000',
-        width: '40%',
         fontWeight: 'bold',
         borderWidth: 5,
         borderRadius: 25,
-        margin: 5
+        margin: 5,
+        padding: 5
       },
       pressableText: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center'
       },

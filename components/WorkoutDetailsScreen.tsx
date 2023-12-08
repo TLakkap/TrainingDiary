@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import StyleSheet from '../Styles'
-import Styles from '../Styles';
 
 type Props = NativeStackScreenProps<RootStackParams, "WorkoutDetails">
 

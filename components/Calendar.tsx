@@ -19,11 +19,11 @@ export default function Calendar({ handleDayChange, monthlyWorkouts, setSelected
         let backgroundColor = '#FFFFFF'; // Default background color
 
         if (hasCardio && hasKuntosali) {
-        backgroundColor = '#FFD700'; // Yellow for both Cardio and Kuntosali
+        backgroundColor = '#9d4edd'; // Purple for both Cardio and Kuntosali
         } else if (hasCardio) {
-        backgroundColor = '#ADD8E6'; // Blue for Cardio
+        backgroundColor = '#4361ee'; // Blue for Cardio
         } else if (hasKuntosali) {
-        backgroundColor = '#FF0000'; // Red for Kuntosali
+        backgroundColor = '#bf0603'; // Red for Kuntosali
         }
 
         customDatesStyles.push({
