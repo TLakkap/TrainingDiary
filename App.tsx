@@ -51,8 +51,17 @@ const RootStack = createNativeStackNavigator<RootStackParams>();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator initialRouteName='Login'>
+    <NavigationContainer >
+      <RootStack.Navigator initialRouteName='Login' 
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#008000',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+          fontWeight: 'bold',
+          },
+        }}>
           <RootStack.Screen name='Login' component={LoginScreen} />
           <RootStack.Screen name='Home' component={HomeScreen} />
           <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />

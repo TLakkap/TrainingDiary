@@ -5,6 +5,8 @@ import { RootStackParams } from '../App';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
+import StyleSheet from '../Styles'
+import Styles from '../Styles';
 
 type Props = NativeStackScreenProps<RootStackParams, "WorkoutDetails">
 
@@ -49,14 +51,14 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     const gymDetails = () => {
         return(
             <View>
-                <Text>Painot kg</Text>
-            <TextInput
+                <Text style={StyleSheet.largeText}>Painot kg</Text>
+            <TextInput style={StyleSheet.input}
                 value={weights}
                 onChangeText={text => setWeights(text)}
                 keyboardType='numeric'
                 placeholder='kg'/>
-            <Text>Toistot</Text>
-            <TextInput
+            <Text style={StyleSheet.largeText}>Toistot</Text>
+            <TextInput style={StyleSheet.input}
                 value={reps}
                 onChangeText={text => setReps(text)}
                 keyboardType='numeric'
@@ -72,20 +74,14 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
                     </Pressable>
                 </View>
             )}
-            <Button title="Lisää" onPress={() => addSet()} />
-            <Text>Kommentit</Text>
+            <Pressable style={StyleSheet.pressableButton} 
+                onPress={() => addSet()} >
+                <Text style={StyleSheet.pressableText}>Lisää</Text>
+            </Pressable>
+            <Text style={StyleSheet.largeText}>Kommentit</Text>
             <TextInput 
                 value={comments}
                 onChangeText={text => setComments(text)}/>
-            {/* <Button title="Tallenna" onPress={() => {
-                const details = {
-                    kms: '',
-                    time: '',
-                    gymExercise: exercise,
-                    gymExerciseDetails: exerciseDetails
-                }
-                navigation.navigate("Home", {details, comments, classification})
-            }} /> */}
             </View>
         )
     }
@@ -94,19 +90,19 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         return(
             <View>
                 <Text>Matka (km)</Text>
-            <TextInput
+            <TextInput style={StyleSheet.input}
                 value={kms}
                 onChangeText={text => setKms(text)}
                 keyboardType='numeric'
                 placeholder='km'/>
             <Text>Aika (min)</Text>
-            <TextInput
+            <TextInput style={StyleSheet.input}
                 value={time}
                 onChangeText={text => setTime(text)}
                 keyboardType='numeric'
                 placeholder='minutes'/>
             <Text>Kommentit</Text>
-            <TextInput 
+            <TextInput style={StyleSheet.input}
                 value={comments}
                 onChangeText={text => setComments(text)}/>
             </View>
@@ -117,13 +113,13 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         return(
             <View>
             <Text>Aika (min)</Text>
-            <TextInput
+            <TextInput style={StyleSheet.input}
                 value={time}
                 onChangeText={text => setTime(text)}
                 keyboardType='numeric'
                 placeholder='minutes'/>
             <Text>Kommentit</Text>
-            <TextInput 
+            <TextInput style={StyleSheet.input}
                 value={comments}
                 onChangeText={text => setComments(text)}/>
             </View>
@@ -132,12 +128,12 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
 
     return(
         <View>
-            <Text>{exercise}</Text>
+            <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{exercise}</Text>
             {classification === "Kuntosali" && gymDetails()}
             {classification === "Cardio" && cardioDetails()}
             {classification === "Muu" && cardioDetails()}
             {classification === "Kehonhuolto" && stretchDetails()}
-            <Button title="Tallenna" onPress={() => {
+            <Pressable style={StyleSheet.pressableButton} onPress={() => {
                 const details = {
                     kms: kms,
                     time: time,
@@ -145,7 +141,8 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
                     gymExerciseDetails: exerciseDetails
                 }
                 navigation.navigate("Home", {details, comments, classification})
-            }} /> 
+            }}><Text style={StyleSheet.pressableText}>Tallenna</Text>
+            </Pressable> 
         </View>
     )
 }

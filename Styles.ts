@@ -4,11 +4,9 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         height: '100%',
-        backgroundColor: '#eef4ed'
       },
       calendar: {
-        backgroundColor: '#ffffff',
-        borderWidth: 1
+        borderTopWidth: 1
       },
       login: {
         padding: 30,
@@ -19,12 +17,12 @@ export default StyleSheet.create({
         fontSize: 18,
         borderTopWidth: 1,
         borderBottomWidth: 1,
-        textAlign: 'center', 
+        textAlign: 'center',
       },
       workoutHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: '#89c2d9',
+        backgroundColor: '#d6eadf',
         borderBottomWidth: 1,
         marginBottom: 2,
         marginTop: 2
@@ -37,9 +35,9 @@ export default StyleSheet.create({
       listElement: {
         width: '97%',
         flexDirection: 'row',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 5,
+        borderBottomWidth: 1,
+        borderTopWidth: 1,
+        padding: 6,
         margin: 5,
         justifyContent: 'space-between',
         backgroundColor: '#ffffff'
@@ -77,6 +75,11 @@ export default StyleSheet.create({
         borderRadius: 5,
         borderColor: '#97b498'
       },
+      largeText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        margin: 5
+      },
       text: {
         fontSize: 16,
       },
@@ -95,15 +98,16 @@ export default StyleSheet.create({
         padding: 4
       },
       pressableButton: {
-        backgroundColor: '#38a3a5',
+        backgroundColor: '#d6eadf',
+        borderColor: '#008000',
         width: '40%',
         fontWeight: 'bold',
+        borderWidth: 5,
         borderRadius: 25,
         margin: 5
       },
       pressableText: {
         fontSize: 30,
-        color: '#ffffff',
         fontWeight: 'bold',
         textAlign: 'center'
       },

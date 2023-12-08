@@ -206,10 +206,12 @@ export default function HomeScreen({route, navigation}: Props) {
       <ScrollView>
         {showWorkouts()}
       </ScrollView>
-      <Pressable style={StyleSheet.pressableButton}
-        onPress={() => navigation.navigate('AddWorkout')}>
-          <Text style={StyleSheet.pressableText}>+</Text>
-      </Pressable>
+      <View style={{alignItems: 'center'}}>
+        <Pressable style={StyleSheet.pressableButton}
+          onPress={() => navigation.navigate('AddWorkout')}>
+            <Text style={StyleSheet.pressableText}>+</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
