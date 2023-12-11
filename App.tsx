@@ -5,7 +5,6 @@ import HomeScreen from './components/HomeScreen'
 import AddWorkoutScreen from './components/AddWorkoutScreen'
 import ChooseExerciseScreen from './components/ChooseExerciseScreen'
 import WorkoutDetailsScreen from './components/WorkoutDetailsScreen'
-import EditWorkoutScreen from './components/EditWorkoutScreen'
 import EditSavedWorkout from './components/EditSavedWorkout'
 
 interface Workout {
@@ -55,13 +54,6 @@ export type RootStackParams = {
       reps: string
     }[]
   }
-  EditWorkout: {
-    index: number
-    updatedSet: {
-      weights: string
-      reps: string
-    }[]
-  }
   EditSavedWorkout: {
     workouts: Workout[]
     classification: string
@@ -84,7 +76,6 @@ export default function App() {
           <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
           <RootStack.Screen name='ChooseExercise' component={ChooseExerciseScreen} />
           <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} />
-          <RootStack.Screen name='EditWorkout' component={EditWorkoutScreen} />
           <RootStack.Screen name='EditSavedWorkout' component={EditSavedWorkout} />
       </RootStack.Navigator>
     </NavigationContainer>

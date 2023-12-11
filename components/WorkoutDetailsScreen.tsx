@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, View, Pressable, TextInput } from 'react-native';
+import { Text, View, Pressable, TextInput, ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -16,8 +16,8 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     const [weights, setWeights] = useState('')
     const [reps, setReps] = useState('')
     const [comments, setComments] = useState('')
-    const [kms, setKms] = useState('0')
-    const [time, setTime] = useState('0')
+    const [kms, setKms] = useState<string>()
+    const [time, setTime] = useState<string>()
     const [updateMode, setUpdateMode] = useState(false)
     const [updateIndex, setUpdateIndex] = useState<number>(0)
 
@@ -50,8 +50,6 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         setUpdateIndex(index)
         setWeights(exerciseDetails[index].weights)
         setReps(exerciseDetails[index].reps)
-
-        //navigation.navigate("EditWorkout", {index, updatedSet})
     }
 
     const deleteSet = (index: number) => {
@@ -76,14 +74,17 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
                 keyboardType='numeric'
                 placeholder='toistot'/>
             {exerciseDetails.length !== 0 && exerciseDetails.map((ed, index) =>
-                <View  key={index} style={{flexDirection: 'row'}}>
-                    <Text>{ed.weights} kg {ed.reps} toistoa</Text>
-                    {!updateMode && <Pressable onPress={() => editSet(index)}>
-                        <FontAwesomeIcon icon={ faPencil } />
-                    </Pressable>}
-                    <Pressable onPress={() => deleteSet(index)}>
-                        <FontAwesomeIcon icon={ faTrashCan } />
-                    </Pressable>
+                <View  key={index} style={StyleSheet.listElement}>
+                    <Text>{ed.weights} kg</Text>
+                    <Text>x {ed.reps}</Text>
+                    {!updateMode && <View style={{ flexDirection: 'row'}}> 
+                        <Pressable onPress={() => editSet(index)}>
+                            <FontAwesomeIcon size={22} icon={ faPencil } />
+                        </Pressable>
+                        <Pressable onPress={() => deleteSet(index)}>
+                            <FontAwesomeIcon size={22} icon={ faTrashCan } />
+                        </Pressable>
+                    </View>}
                 </View>
             )}
             <Pressable style={StyleSheet.pressableButton} 
@@ -140,22 +141,25 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     }
 
     return(
-        <View>
+        <ScrollView>
             <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{exercise}</Text>
             {classification === "Kuntosali" && gymDetails()}
             {classification === "Cardio" && cardioDetails()}
             {classification === "Muu" && cardioDetails()}
             {classification === "Kehonhuolto" && stretchDetails()}
-            <Pressable style={StyleSheet.pressableButton} onPress={() => {
-                const details = {
-                    kms: kms,
-                    time: time,
-                    gymExercise: exercise,
-                    gymExerciseDetails: exerciseDetails
-                }
-                navigation.navigate("Home", {details, comments, classification})
-            }}><Text style={StyleSheet.pressableText}>Tallenna</Text>
-            </Pressable> 
-        </View>
+            {!updateMode && <View>
+                <Pressable style={StyleSheet.pressableButton} onPress={() => {
+                    const details = {
+                        kms: kms,
+                        time: time,
+                        gymExercise: exercise,
+                        gymExerciseDetails: exerciseDetails
+                    }
+                    navigation.navigate("Home", {details, comments, classification})
+                }}>
+                    <Text style={StyleSheet.pressableText}>Tallenna</Text>
+                </Pressable>
+            </View>}
+        </ScrollView>
     )
 }

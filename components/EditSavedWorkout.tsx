@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View, TextInput, Pressable } from 'react-native';
+import { Text, View, TextInput, Pressable, ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import { updateData } from '../workoutStorage'
@@ -49,6 +49,7 @@ export default function EditSavedWorkout({route, navigation}: Props) {
             setKms(updatedWorkouts[foundWorkoutIndex].details.kms)
             setTime(updatedWorkouts[foundWorkoutIndex].details.time)
         }
+        setComments(updatedWorkouts[foundWorkoutIndex].comments)
     }, [])
 
     const handleUpdateData = async (updatedWorkouts: Workout[]) => {
@@ -61,6 +62,7 @@ export default function EditSavedWorkout({route, navigation}: Props) {
       }
 
     const handleSavePress = () => {
+        updatedWorkouts[foundWorkoutIndex].comments = comments
         updatedWorkouts[foundWorkoutIndex].details = {
             kms: kms,
             time: time,
@@ -127,14 +129,14 @@ export default function EditSavedWorkout({route, navigation}: Props) {
                     </View>}
                 </View>
             )}
-            {updateMode && <Pressable style={StyleSheet.pressableButton} 
-                onPress={() => addSet()} >
-                <Text style={StyleSheet.pressableText}>Päivitä</Text>
-            </Pressable>}
             <Text style={StyleSheet.largeText}>Kommentit</Text>
             <TextInput 
                 value={comments}
                 onChangeText={text => setComments(text)}/>
+            {updateMode && <Pressable style={StyleSheet.pressableButton} 
+                onPress={() => addSet()} >
+                <Text style={StyleSheet.pressableText}>Päivitä</Text>
+            </Pressable>}
             </View>
         )
     }
@@ -180,15 +182,17 @@ export default function EditSavedWorkout({route, navigation}: Props) {
     }
 
     return(
-        <View>
+        <ScrollView>
             <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{updatedWorkouts[foundWorkoutIndex].details.gymExercise}</Text>
             {classification === "Kuntosali" && gymDetails()}
             {classification === "Cardio" && cardioDetails()}
             {classification === "Muu" && cardioDetails()}
             {classification === "Kehonhuolto" && stretchDetails()}
-            <Pressable style={StyleSheet.pressableButton} onPress={() => handleSavePress()}>
-                <Text style={StyleSheet.pressableText}>Tallenna</Text>
-            </Pressable>
-        </View>
+            {!updateMode && <View>
+                <Pressable style={StyleSheet.pressableButton} onPress={() => handleSavePress()}>
+                    <Text style={StyleSheet.pressableText}>Tallenna</Text>
+                </Pressable>
+            </View>}
+        </ScrollView>
     )        
 }   
