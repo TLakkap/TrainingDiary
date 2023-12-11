@@ -204,7 +204,7 @@ export default function HomeScreen({route, navigation}: Props) {
                 {w.classification === "Kuntosali" && <View>{w.details.gymExerciseDetails?.map((d, index) =>
                   showGym(d, index, w.id)
                 )}</View>}
-                <Text style={StyleSheet.comments}>{w.comments}</Text>
+                {w.comments && <Text style={StyleSheet.comments}>{w.comments}</Text>}
               </View>
             }
         </View>)
@@ -213,6 +213,7 @@ export default function HomeScreen({route, navigation}: Props) {
   }
 
   const handleDayChange = (day: string) => {
+    setWorkouts([])
     const parsedDate = new Date(day); // parse date from string
     setDate(parsedDate.toISOString().split('T')[0])
     const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;

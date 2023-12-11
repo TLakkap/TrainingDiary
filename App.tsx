@@ -72,11 +72,11 @@ export default function App() {
           headerTitleStyle: { fontWeight: 'bold' }
         }}>
           <RootStack.Screen name='Login' component={LoginScreen} />
-          <RootStack.Screen name='Home' component={HomeScreen} />
-          <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} />
-          <RootStack.Screen name='ChooseExercise' component={ChooseExerciseScreen} />
-          <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} />
-          <RootStack.Screen name='EditSavedWorkout' component={EditSavedWorkout} />
+          <RootStack.Screen name='Home' component={HomeScreen} options={{ title: 'Kalenteri' }} />
+          <RootStack.Screen name='AddWorkout' component={AddWorkoutScreen} options={{ title: 'Valitse luokka' }} />
+          <RootStack.Screen name='ChooseExercise' component={ChooseExerciseScreen} options={{ title: 'Valitse harjoitus' }} />
+          <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} options={{ title: 'Harjoituksen tiedot' }} />
+          <RootStack.Screen name='EditSavedWorkout' component={EditSavedWorkout} options={{ title: 'Muokkaa tietoja' }} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
