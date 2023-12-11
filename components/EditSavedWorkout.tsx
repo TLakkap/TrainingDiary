@@ -1,17 +1,35 @@
-import { useState, useEffect } from 'react';
-import { Text, View, Pressable, TextInput } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Text, View, TextInput, Pressable } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
+import { updateData } from '../workoutStorage'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
+import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import StyleSheet from '../Styles'
 
-type Props = NativeStackScreenProps<RootStackParams, "WorkoutDetails">
+interface Workout {
+    id: string
+    classification: string
+    comments: string
+    details: {
+        kms: string
+        time: string
+        gymExercise: string
+        gymExerciseDetails: {
+          weights: string
+          reps: string
+        }[]
+    }
+  }
 
-export default function WorkoutDetailsScreen ({route, navigation}: Props) {
-    const [exercise, setExercise] = useState('')
-    const [classification, setClassification] = useState('')
+type Props = NativeStackScreenProps<RootStackParams, "EditSavedWorkout">
+
+export default function EditSavedWorkout({route, navigation}: Props) {
+    let updatedWorkouts = [...route.params.workouts]
+    const classification = route.params.classification
+    const date = route.params.date
+    const id = route.params.id
     const [exerciseDetails, setExerciseDetails] = useState<any[]>([])
     const [weights, setWeights] = useState('')
     const [reps, setReps] = useState('')
@@ -21,28 +39,47 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     const [updateMode, setUpdateMode] = useState(false)
     const [updateIndex, setUpdateIndex] = useState<number>(0)
 
-    useEffect(() => {
-        if (route.params?.updatedSet) {
-            setExerciseDetails(route.params.updatedSet)
-        } else if (route.params?.exercise && route.params?.classification){
-            setClassification(route.params.classification)
-            setExercise(route.params.exercise)
+
+    const foundWorkoutIndex = updatedWorkouts.findIndex(w => w.id === id)
+
+    useEffect(()=> {
+        if(classification === "Kuntosali"){
+            setExerciseDetails(updatedWorkouts[foundWorkoutIndex].details.gymExerciseDetails)
+        } else if(classification === "Cardio"){
+            setKms(updatedWorkouts[foundWorkoutIndex].details.kms)
+            setTime(updatedWorkouts[foundWorkoutIndex].details.time)
         }
-      }, [route.params?.updatedSet, route.params?.exercise, route.params?.classification] )
+    }, [])
+
+    const handleUpdateData = async (updatedWorkouts: Workout[]) => {
+        try {
+          await updateData(date, updatedWorkouts);
+          console.log('Workout updated');
+        } catch (error) {
+          console.error('Update error:', error);
+        }
+      }
+
+    const handleSavePress = () => {
+        updatedWorkouts[foundWorkoutIndex].details = {
+            kms: kms,
+            time: time,
+            gymExercise: updatedWorkouts[foundWorkoutIndex].details.gymExercise,
+            gymExerciseDetails: exerciseDetails
+        }
+        handleUpdateData(updatedWorkouts)
+
+        navigation.goBack()
+        navigation.navigate('Home', { updatedWorkouts })}
+
 
     const addSet = () => {
-        if(updateMode){
-            let updatedSet = [...exerciseDetails]
-            updatedSet[updateIndex].weights = weights
-            updatedSet[updateIndex].reps = reps
-            setUpdateMode(false)
-        }else {
-            const newSet = {
-                weights: weights,
-                reps: reps
-            }
-            setExerciseDetails([...exerciseDetails, newSet])
-        }
+        let updatedSet = [...exerciseDetails]
+        updatedSet[updateIndex].weights = weights
+        updatedSet[updateIndex].reps = reps
+        setExerciseDetails(updatedSet)
+
+        setUpdateMode(false)
     }
 
     const editSet = (index: number) => {
@@ -50,8 +87,6 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         setUpdateIndex(index)
         setWeights(exerciseDetails[index].weights)
         setReps(exerciseDetails[index].reps)
-
-        //navigation.navigate("EditWorkout", {index, updatedSet})
     }
 
     const deleteSet = (index: number) => {
@@ -64,18 +99,19 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
         return(
             <View>
                 <Text style={StyleSheet.largeText}>Painot kg</Text>
-            <TextInput style={StyleSheet.input}
-                value={weights}
-                onChangeText={text => setWeights(text)}
-                keyboardType='numeric'
-                placeholder='kg'/>
-            <Text style={StyleSheet.largeText}>Toistot</Text>
-            <TextInput style={StyleSheet.input}
-                value={reps}
-                onChangeText={text => setReps(text)}
-                keyboardType='numeric'
-                placeholder='toistot'/>
-            {exerciseDetails.length !== 0 && exerciseDetails.map((ed, index) =>
+                <TextInput style={StyleSheet.input}
+                    value={weights}
+                    onChangeText={text => setWeights(text)}
+                    keyboardType='numeric'
+                    placeholder='kg'/>
+                <Text style={StyleSheet.largeText}>Toistot</Text>
+                <TextInput style={StyleSheet.input}
+                    value={reps}
+                    onChangeText={text => setReps(text)}
+                    keyboardType='numeric'
+                    placeholder='toistot'/>
+            {exerciseDetails.length !== 0 && 
+            exerciseDetails.map((ed, index) =>
                 <View  key={index} style={{flexDirection: 'row'}}>
                     <Text>{ed.weights} kg {ed.reps} toistoa</Text>
                     {!updateMode && <Pressable onPress={() => editSet(index)}>
@@ -88,7 +124,6 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
             )}
             <Pressable style={StyleSheet.pressableButton} 
                 onPress={() => addSet()} >
-                {!updateMode && <Text style={StyleSheet.pressableText}>Lisää</Text>}
                 {updateMode && <Text style={StyleSheet.pressableText}>Päivitä</Text>}
             </Pressable>
             <Text style={StyleSheet.largeText}>Kommentit</Text>
@@ -141,21 +176,14 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
 
     return(
         <View>
-            <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{exercise}</Text>
+            <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{updatedWorkouts[foundWorkoutIndex].details.gymExercise}</Text>
             {classification === "Kuntosali" && gymDetails()}
             {classification === "Cardio" && cardioDetails()}
             {classification === "Muu" && cardioDetails()}
             {classification === "Kehonhuolto" && stretchDetails()}
-            <Pressable style={StyleSheet.pressableButton} onPress={() => {
-                const details = {
-                    kms: kms,
-                    time: time,
-                    gymExercise: exercise,
-                    gymExerciseDetails: exerciseDetails
-                }
-                navigation.navigate("Home", {details, comments, classification})
-            }}><Text style={StyleSheet.pressableText}>Tallenna</Text>
-            </Pressable> 
+            <Pressable style={StyleSheet.pressableButton} onPress={() => handleSavePress()}>
+                <Text style={StyleSheet.pressableText}>Tallenna</Text>
+            </Pressable>
         </View>
-    )
-}
+    )        
+}   

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Workout {
   id: string
-  workout: string
+  classification: string
   comments: string
   details: {
       kms: string | undefined
@@ -85,4 +85,14 @@ export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> 
       console.error('AsyncStorage getItem error:', error);
       return null;
       }
+  }
+
+  export const clearAll = async () => {
+    try {
+      await AsyncStorage.clear()
+    } catch(e) {
+      // clear error
+    }
+  
+    console.log('Done.')
   }

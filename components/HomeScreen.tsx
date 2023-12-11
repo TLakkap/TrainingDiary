@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, Pressable } from 'react-native';
-import { storeData, getData, updateData, getWorkoutsForMonth } from '../workoutStorage'
+import { Text, View, Button, ScrollView, Pressable, Modal, TextInput } from 'react-native';
+import { storeData, getData, updateData, getWorkoutsForMonth, clearAll } from '../workoutStorage'
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
@@ -13,7 +13,7 @@ import StyleSheet from '../Styles'
 
 interface Workout {
   id: string
-  workout: string
+  classification: string
   comments: string
   details: {
       kms: string | undefined
@@ -44,11 +44,18 @@ export default function HomeScreen({route, navigation}: Props) {
       }
   }, []);
 
+  useEffect(() => {
+    if (route.params?.updatedWorkouts) {
+      setWorkouts(route.params.updatedWorkouts);
+    }
+  }, [route.params?.updatedWorkouts]);
+
   useEffect(() => {   //get workouts for the selected day
     const getWorkouts = async () => {
       if (date !== null){
         const response = await getData(date)
         if (response) {
+          console.log(response)
           setWorkouts([])
           setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
         } else {
@@ -66,7 +73,7 @@ export default function HomeScreen({route, navigation}: Props) {
           if (response) {
             const workoutsByDate = Object.keys(response).map(date => ({
               date,
-              monthWorkouts: response[date].map(workout => workout.workout)
+              monthWorkouts: response[date].map(workout => workout.classification)
             }))
             setMonthlyWorkouts(workoutsByDate);
           } else {
@@ -84,7 +91,7 @@ export default function HomeScreen({route, navigation}: Props) {
     if (route.params?.details) {  // checking if there are details parameters from GymExercises
       const workout = {
         id: generateUniqueId(),
-        workout: route.params.classification,
+        classification: route.params.classification,
         comments: route.params.comments,
         details: route.params.details
       }
@@ -149,30 +156,33 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
-  const workoutHeader = (details, id) => (
+  const editSavedWorkout = (id: string, classification: string) => {
+    navigation.navigate("EditSavedWorkout", {workouts, classification, id, date})
+  }
+
+  const workoutHeader = (details: any, id: string, classification: string, exercise: string) => (
     <View style={StyleSheet.workoutHeader}>
       <Pressable onPress={() => handleWorkoutPress(details.gymExercise)}>
-              <Text style={StyleSheet.workoutHeaderText}>{details.gymExercise}</Text>
-            </Pressable>
-            <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
-                  <FontAwesomeIcon size={22} icon={ faTrashCan } />
-            </Pressable>
+        <Text style={StyleSheet.workoutHeaderText}>{details.gymExercise}</Text>
+      </Pressable>
+      <Pressable onPress={() => editSavedWorkout(id, classification)} >
+          <FontAwesomeIcon icon={ faPencil } />
+      </Pressable>
+      <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
+        <FontAwesomeIcon size={22} icon={ faTrashCan } />
+      </Pressable>
     </View>
   )
 
-  const showCardio = (details) => (
+  const showCardio = (id: string, details: any) => {
+  return (
     <View style={(details.kms !== '0' || details.time !== '0') ? StyleSheet.listElement : null}>
       {details.kms !== '0' && <Text>{details.kms} km</Text>}
       {details.time !== '0' && <Text>{details.time} min</Text>}
-      {/* {details.kms !== '0' && details.time !== '0' && 
-          <Pressable onPress={() => console.log("Muokkaustila")}>
-                  <FontAwesomeIcon icon={ faPencil } />
-                </Pressable>
-                } */}
     </View>
-  )
+  )}
 
-  const showGym = (d, index, id) => (
+  const showGym = (d: any, index: number, id: string) => (
     <View key={index} style={StyleSheet.listElement}>
       {d.weights !== '' && <Text> {d.weights} kg</Text>}
       {d.reps !== '' && <Text> {d.reps} toistoa </Text>}
@@ -186,10 +196,10 @@ export default function HomeScreen({route, navigation}: Props) {
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
-          {workoutHeader(w.details, w.id)}
+          {workoutHeader(w.details, w.id, w.classification, w.details.gymExercise)}
             {showDetails === w.details.gymExercise &&
               <View>
-                {showCardio(w.details)}
+                {showCardio(w.id, w.details)}
                 {w.details.gymExerciseDetails?.map((d, index) =>
                   showGym(d, index, w.id)
                 )}
@@ -219,12 +229,13 @@ export default function HomeScreen({route, navigation}: Props) {
       <ScrollView>
         {showWorkouts()}
       </ScrollView>
-      <View style={{alignItems: 'center'}}>
         <Pressable style={StyleSheet.pressableButton}
           onPress={() => navigation.navigate('AddWorkout')}>
             <Text style={StyleSheet.pressableText}>Lisää harjoitus</Text>
         </Pressable>
-      </View>
+        <Button title='Tyhjennä' onPress={() => clearAll()} />
     </View>
   );
 }
+
+
