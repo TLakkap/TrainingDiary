@@ -98,34 +98,39 @@ export default function EditSavedWorkout({route, navigation}: Props) {
     const gymDetails = () => {
         return(
             <View>
-                <Text style={StyleSheet.largeText}>Painot kg</Text>
-                <TextInput style={StyleSheet.input}
-                    value={weights}
-                    onChangeText={text => setWeights(text)}
-                    keyboardType='numeric'
-                    placeholder='kg'/>
-                <Text style={StyleSheet.largeText}>Toistot</Text>
-                <TextInput style={StyleSheet.input}
-                    value={reps}
-                    onChangeText={text => setReps(text)}
-                    keyboardType='numeric'
-                    placeholder='toistot'/>
+                {updateMode && <View>
+                    <Text style={StyleSheet.largeText}>Painot kg</Text>
+                    <TextInput style={StyleSheet.input}
+                        value={weights}
+                        onChangeText={text => setWeights(text)}
+                        keyboardType='numeric'
+                        placeholder='kg'/>
+                    <Text style={StyleSheet.largeText}>Toistot</Text>
+                    <TextInput style={StyleSheet.input}
+                        value={reps}
+                        onChangeText={text => setReps(text)}
+                        keyboardType='numeric'
+                        placeholder='toistot'/>
+                </View>}
             {exerciseDetails.length !== 0 && 
             exerciseDetails.map((ed, index) =>
-                <View  key={index} style={{flexDirection: 'row'}}>
-                    <Text>{ed.weights} kg {ed.reps} toistoa</Text>
-                    {!updateMode && <Pressable onPress={() => editSet(index)}>
-                        <FontAwesomeIcon icon={ faPencil } />
-                    </Pressable>}
-                    <Pressable onPress={() => deleteSet(index)}>
-                        <FontAwesomeIcon icon={ faTrashCan } />
-                    </Pressable>
+                <View key={index} style={StyleSheet.listElement}>
+                    <Text>{ed.weights} kg</Text>
+                    <Text>x{ed.reps}</Text>
+                    {!updateMode && <View style={{ flexDirection: 'row'}}> 
+                        <Pressable onPress={() => editSet(index)}>
+                            <FontAwesomeIcon icon={ faPencil } />
+                        </Pressable>
+                        <Pressable onPress={() => deleteSet(index)}>
+                            <FontAwesomeIcon icon={ faTrashCan } />
+                        </Pressable>
+                    </View>}
                 </View>
             )}
-            <Pressable style={StyleSheet.pressableButton} 
+            {updateMode && <Pressable style={StyleSheet.pressableButton} 
                 onPress={() => addSet()} >
-                {updateMode && <Text style={StyleSheet.pressableText}>Päivitä</Text>}
-            </Pressable>
+                <Text style={StyleSheet.pressableText}>Päivitä</Text>
+            </Pressable>}
             <Text style={StyleSheet.largeText}>Kommentit</Text>
             <TextInput 
                 value={comments}

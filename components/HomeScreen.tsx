@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, Pressable, Modal, TextInput } from 'react-native';
+import { Text, View, Button, ScrollView, Pressable } from 'react-native';
 import { storeData, getData, updateData, getWorkoutsForMonth, clearAll } from '../workoutStorage'
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -44,7 +44,7 @@ export default function HomeScreen({route, navigation}: Props) {
       }
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {   // update homescreen after workout has been updated
     if (route.params?.updatedWorkouts) {
       setWorkouts(route.params.updatedWorkouts);
     }
@@ -55,7 +55,6 @@ export default function HomeScreen({route, navigation}: Props) {
       if (date !== null){
         const response = await getData(date)
         if (response) {
-          console.log(response)
           setWorkouts([])
           setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
         } else {
@@ -73,7 +72,7 @@ export default function HomeScreen({route, navigation}: Props) {
           if (response) {
             const workoutsByDate = Object.keys(response).map(date => ({
               date,
-              monthWorkouts: response[date].map(workout => workout.classification)
+              monthWorkouts: response[date].map(workout => workout.classification)  // "Kuntosali", "Cardio" etc. used to get right colors in calendar
             }))
             setMonthlyWorkouts(workoutsByDate);
           } else {
@@ -85,10 +84,10 @@ export default function HomeScreen({route, navigation}: Props) {
         }
     }}
     getWorkouts()
-  }, [selectedMonth, selectedYear])
+  }, [selectedMonth, selectedYear, workouts])
 
   useEffect(() => {  // storing new workout
-    if (route.params?.details) {  // checking if there are details parameters from GymExercises
+    if (route.params?.details) {
       const workout = {
         id: generateUniqueId(),
         classification: route.params.classification,
@@ -148,7 +147,7 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
-  const handleWorkoutPress = (pressedWorkout: string) => {
+  const handleWorkoutPress = (pressedWorkout: string) => {  // Show details of a workout
     if (pressedWorkout === showDetails) {
       setShowDetails('')
     } else {
@@ -160,32 +159,34 @@ export default function HomeScreen({route, navigation}: Props) {
     navigation.navigate("EditSavedWorkout", {workouts, classification, id, date})
   }
 
-  const workoutHeader = (details: any, id: string, classification: string, exercise: string) => (
+  const workoutHeader = (details: any, id: string, classification: string) => (
     <View style={StyleSheet.workoutHeader}>
       <Pressable onPress={() => handleWorkoutPress(details.gymExercise)}>
         <Text style={StyleSheet.workoutHeaderText}>{details.gymExercise}</Text>
       </Pressable>
-      <Pressable onPress={() => editSavedWorkout(id, classification)} >
-          <FontAwesomeIcon icon={ faPencil } />
-      </Pressable>
-      <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
-        <FontAwesomeIcon size={22} icon={ faTrashCan } />
-      </Pressable>
+      <View style={{ flexDirection: 'row'}}>
+        <Pressable style={StyleSheet.workoutHeaderText} onPress={() => editSavedWorkout(id, classification)} >
+            <FontAwesomeIcon size={22} icon={ faPencil } />
+        </Pressable>
+        <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
+          <FontAwesomeIcon size={22} icon={ faTrashCan } />
+        </Pressable>
+      </View>
     </View>
   )
 
-  const showCardio = (id: string, details: any) => {
+  const showCardio = (details: any) => {
   return (
-    <View style={(details.kms !== '0' || details.time !== '0') ? StyleSheet.listElement : null}>
-      {details.kms !== '0' && <Text>{details.kms} km</Text>}
-      {details.time !== '0' && <Text>{details.time} min</Text>}
+    <View style={(details.kms !== '' || details.time !== '') ? StyleSheet.listElement : null}>
+      {details.kms !== '' && <Text>{details.kms} km</Text>}
+      {details.time !== '' && <Text>{details.time} min</Text>}
     </View>
   )}
 
   const showGym = (d: any, index: number, id: string) => (
     <View key={index} style={StyleSheet.listElement}>
       {d.weights !== '' && <Text> {d.weights} kg</Text>}
-      {d.reps !== '' && <Text> {d.reps} toistoa </Text>}
+      {d.reps !== '' && <Text>x {d.reps} </Text>}
       <Pressable onPress={() => deleteSet(id, index)}>
         <FontAwesomeIcon icon={ faTrashCan } />
       </Pressable>
@@ -196,13 +197,13 @@ export default function HomeScreen({route, navigation}: Props) {
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
-          {workoutHeader(w.details, w.id, w.classification, w.details.gymExercise)}
+          {workoutHeader(w.details, w.id, w.classification)}
             {showDetails === w.details.gymExercise &&
               <View>
-                {showCardio(w.id, w.details)}
-                {w.details.gymExerciseDetails?.map((d, index) =>
+                {w.classification === "Cardio" && <View>{showCardio(w.details)}</View>}
+                {w.classification === "Kuntosali" && <View>{w.details.gymExerciseDetails?.map((d, index) =>
                   showGym(d, index, w.id)
-                )}
+                )}</View>}
                 <Text style={StyleSheet.comments}>{w.comments}</Text>
               </View>
             }
