@@ -2,6 +2,8 @@ import { FlatList, Text, View, Button, Pressable, Modal, TextInput } from 'react
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import StyleSheet from '../Styles'
+import Search from './Search';
+import { useEffect, useState } from 'react';
 
 interface ExerciseItem {
     id: string;
@@ -12,6 +14,20 @@ type Props = NativeStackScreenProps<RootStackParams, "ChooseExercise">
 
 export default function ChooseExerciseScreen ({route, navigation}: Props) {
     const {exercises, classification} = route.params
+    const [items, setItems] = useState<ExerciseItem[]>()
+
+    useEffect(() => {
+        setItems(exercisesSorted)
+    }, [])
+
+    const exercisesSorted = exercises.sort((a, b) => {
+        return a.exercise.localeCompare(b.exercise)
+    })
+
+    const executeSearch = (search: string) => {
+        const searchArray = exercisesSorted.filter((item) => item.exercise.startsWith(search))
+        setItems(searchArray)
+    }
 
     const renderItem = ({ item }: {item: ExerciseItem}) => {
         return (
@@ -29,8 +45,9 @@ export default function ChooseExerciseScreen ({route, navigation}: Props) {
 
     return(
         <View>
+            <Search executeSearch={executeSearch} />
             <FlatList
-            data={exercises}
+            data={items}
             renderItem={renderItem}
         ></FlatList>
         </View>

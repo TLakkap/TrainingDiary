@@ -16,6 +16,7 @@ interface Exercise {
 type Props = NativeStackScreenProps<RootStackParams, "AddWorkout">
 
 export default function AddWorkoutScreen ({navigation}: Props) {
+
     const renderItem = ({ item }: { item: Exercise}) => {
         return (
             <Pressable onPress={() => select(item)}>
