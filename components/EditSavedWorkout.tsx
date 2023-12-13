@@ -31,14 +31,13 @@ export default function EditSavedWorkout({route, navigation}: Props) {
     const date = route.params.date
     const id = route.params.id
     const [exerciseDetails, setExerciseDetails] = useState<any[]>([])
-    const [weights, setWeights] = useState('')
-    const [reps, setReps] = useState('')
+    const [weights, setWeights] = useState(0)
+    const [reps, setReps] = useState(0)
     const [comments, setComments] = useState('')
     const [kms, setKms] = useState('0')
     const [time, setTime] = useState('0')
     const [updateMode, setUpdateMode] = useState(false)
     const [updateIndex, setUpdateIndex] = useState<number>(0)
-
 
     const foundWorkoutIndex = updatedWorkouts.findIndex(w => w.id === id)
 
@@ -97,22 +96,43 @@ export default function EditSavedWorkout({route, navigation}: Props) {
         setExerciseDetails(updatedSet)
     }
 
+    const handleMinusWeightPress = () => {
+        if(weights < 10) {setWeights(weights-1)} 
+        else {setWeights(weights-2.5)}
+    }
+    
+    const handlePlusWeightPress = () => {
+        if(weights < 10){setWeights(weights+1)} 
+        else {setWeights(weights+2.5)}
+    }
+
+    const handleMinusRepsPress = () => setReps(reps-1)
+    const handlePlusRepsPress = () => setReps(reps+1)
+
     const gymDetails = () => {
         return(
             <View>
                 {updateMode && <View>
                     <Text style={StyleSheet.largeText}>Painot kg</Text>
-                    <TextInput style={StyleSheet.input}
-                        value={weights}
-                        onChangeText={text => setWeights(text)}
-                        keyboardType='numeric'
-                        placeholder='kg'/>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                        <Pressable style={StyleSheet.minusButton} onPress={() => handleMinusWeightPress()}><Text style={StyleSheet.pressableValueText}>-</Text></Pressable>
+                        <TextInput style={StyleSheet.input}
+                            value={weights.toString()}
+                            onChangeText={text => setWeights(parseFloat(text) || 0)}
+                            keyboardType='numeric'
+                        />
+                        <Pressable style={StyleSheet.plusButton} onPress={() => handlePlusWeightPress()}><Text style={StyleSheet.pressableValueText}>+</Text></Pressable>
+                    </View>
                     <Text style={StyleSheet.largeText}>Toistot</Text>
-                    <TextInput style={StyleSheet.input}
-                        value={reps}
-                        onChangeText={text => setReps(text)}
-                        keyboardType='numeric'
-                        placeholder='toistot'/>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                        <Pressable style={StyleSheet.minusButton} onPress={() => handleMinusRepsPress()}><Text style={StyleSheet.pressableValueText}>-</Text></Pressable>  
+                        <TextInput style={StyleSheet.input}
+                            value={reps.toString()}
+                            onChangeText={text => setReps(parseInt(text) || 0)}
+                            keyboardType='numeric'
+                        />
+                        <Pressable style={StyleSheet.plusButton} onPress={() => handlePlusRepsPress()}><Text style={StyleSheet.pressableValueText}>+</Text></Pressable>
+                    </View>
                 </View>}
             {exerciseDetails.length !== 0 && 
             exerciseDetails.map((ed, index) =>

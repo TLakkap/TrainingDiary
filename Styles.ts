@@ -92,10 +92,17 @@ export default StyleSheet.create({
         justifyContent: 'center'
       },
       input: {
-        fontSize: 16,
+        width: '25%',
+        fontSize: 18,
         borderRadius: 5,
-        marginBottom: 12,
-        padding: 4
+        paddingTop: 5,
+        paddingBottom: 5,
+        //paddingLeft: 20,
+        //paddingRight: 20,
+        borderWidth: 1,
+        backgroundColor: 'lightgray',
+        borderColor: 'gray',
+        textAlign: 'center'
       },
       pressableButton: {
         backgroundColor: '#d6eadf',
@@ -111,4 +118,24 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center'
       },
+      minusButton: {
+        width: '15%',
+        backgroundColor: '#ef233c',
+        borderRadius: 10,
+        margin: 10,
+        borderWidth: 1
+      },
+      plusButton: {
+        width: '15%',
+        backgroundColor: '#40916c',
+        borderRadius: 10,
+        margin: 10,
+        borderWidth: 1
+      },
+      pressableValueText: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: 'white',
+        padding: 5
+      }
 })

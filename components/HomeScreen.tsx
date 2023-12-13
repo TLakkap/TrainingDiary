@@ -159,6 +159,16 @@ export default function HomeScreen({route, navigation}: Props) {
     navigation.navigate("EditSavedWorkout", {workouts, classification, id, date})
   }
 
+  const handleDayChange = (day: string) => {
+    setWorkouts([])
+    const parsedDate = new Date(day); // parse date from string
+    setDate(parsedDate.toISOString().split('T')[0])
+    const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;
+    setSelectedDay(formattedDate)
+    setSelectedMonth(parsedDate.getMonth() + 1)  // Months start from index 0
+    setSelectedYear(parsedDate.getFullYear())
+  }
+
   const workoutHeader = (details: any, id: string, classification: string) => (
     <View style={StyleSheet.workoutHeader}>
       <Pressable onPress={() => handleWorkoutPress(details.gymExercise)}>
@@ -212,16 +222,6 @@ export default function HomeScreen({route, navigation}: Props) {
     return <Text>Ei vielä harjoituksia tälle päivälle</Text>
   }
 
-  const handleDayChange = (day: string) => {
-    setWorkouts([])
-    const parsedDate = new Date(day); // parse date from string
-    setDate(parsedDate.toISOString().split('T')[0])
-    const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;
-    setSelectedDay(formattedDate)
-    setSelectedMonth(parsedDate.getMonth() + 1)  // Months start from index 0
-    setSelectedYear(parsedDate.getFullYear())
-  }
-
   return (
     <View style={StyleSheet.container}>
       <View style={StyleSheet.calendar}>
@@ -235,7 +235,7 @@ export default function HomeScreen({route, navigation}: Props) {
           onPress={() => navigation.navigate('AddWorkout')}>
             <Text style={StyleSheet.pressableText}>Lisää harjoitus</Text>
         </Pressable>
-        <Button title='Tyhjennä' onPress={() => clearAll()} />
+        {/* <Button title='Tyhjennä' onPress={() => clearAll()} /> */}
     </View>
   );
 }

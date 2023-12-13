@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 
-export default function Search({ executeSearch }) {
+interface SearchProps {
+    executeSearch: (search: string) => void
+  }
+
+export default function Search({ executeSearch }: SearchProps) {
     const [search, setSearch] = useState('')
 
     return (
         <View style={styles.searchBox}>
-            <TextInput
+            <TextInput style={{ fontSize: 20 }}
             value={search}
             onChangeText={text => setSearch(text)}
             placeholder='Search...'
@@ -19,9 +23,9 @@ export default function Search({ executeSearch }) {
 
 const styles = StyleSheet.create({
     searchBox: {
-        marginBottom: 20,
+        marginBottom: 10,
         borderColor: '#333',
         borderWidth: 1,
-        padding: 5
+        padding: 5,       
     }
 })

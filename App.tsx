@@ -49,10 +49,6 @@ export type RootStackParams = {
   WorkoutDetails: {
     exercise: string
     classification: string
-    updatedSet: {
-      weights: string
-      reps: string
-    }[]
   }
   EditSavedWorkout: {
     workouts: Workout[]

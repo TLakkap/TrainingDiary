@@ -20,7 +20,7 @@ export default function ChooseExerciseScreen ({route, navigation}: Props) {
         setItems(exercisesSorted)
     }, [])
 
-    const exercisesSorted = exercises.sort((a, b) => {
+    const exercisesSorted = exercises.sort((a, b) => {  // exercises to alphabetical order
         return a.exercise.localeCompare(b.exercise)
     })
 
