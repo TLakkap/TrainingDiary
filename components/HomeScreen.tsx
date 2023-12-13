@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, Pressable } from 'react-native';
+import { Text, View, Button, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { storeData, getData, updateData, getWorkoutsForMonth, clearAll } from '../workoutStorage'
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -36,12 +36,14 @@ export default function HomeScreen({route, navigation}: Props) {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; monthWorkouts: string[]; }[]>([])
   const [showDetails, setShowDetails] = useState<string>()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {     // Set today to selected day
-      if(date === ''){
-        const today = new Date()
-        handleDayChange(today.toString())
-      }
+    setIsLoading(true)  
+    if(date === ''){
+      const today = new Date()
+      handleDayChange(today.toString())
+    }
   }, []);
 
   useEffect(() => {   // update homescreen after workout has been updated
@@ -57,7 +59,9 @@ export default function HomeScreen({route, navigation}: Props) {
         if (response) {
           setWorkouts([])
           setWorkouts((prevWorkouts) => prevWorkouts.concat(response))
+          setIsLoading(false)
         } else {
+          setIsLoading(false)
           setWorkouts([])
         }
     }}
@@ -160,7 +164,8 @@ export default function HomeScreen({route, navigation}: Props) {
   }
 
   const handleDayChange = (day: string) => {
-    setWorkouts([])
+    //setWorkouts([])
+    setIsLoading(true)
     const parsedDate = new Date(day); // parse date from string
     setDate(parsedDate.toISOString().split('T')[0])
     const formattedDate = `${parsedDate.getDate()}.${parsedDate.getMonth() + 1}.${parsedDate.getFullYear()}`;
@@ -204,6 +209,9 @@ export default function HomeScreen({route, navigation}: Props) {
   )
 
   const showWorkouts = () => {
+    if(isLoading) {
+      return( <ActivityIndicator size="large" color="#00ff00" />)
+    }
     if (workouts.length !== 0 && workouts[0] !== null) {
       return workouts.map((w: Workout) => 
         <View key={w.id}>
