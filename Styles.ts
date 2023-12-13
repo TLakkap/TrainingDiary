@@ -137,5 +137,9 @@ export default StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         padding: 5
+      },
+      commentsInput: {
+        marginLeft: 5,
+        marginRight: 5,
       }
 })

@@ -164,20 +164,20 @@ export default function EditSavedWorkout({route, navigation}: Props) {
     const cardioDetails = () => {
         return(
             <View>
-                <Text>Matka (km)</Text>
+                <Text style={StyleSheet.largeText}>Matka (km)</Text>
             <TextInput style={StyleSheet.input}
                 value={kms}
                 onChangeText={text => setKms(text)}
                 keyboardType='numeric'
                 placeholder='km'/>
-            <Text>Aika (min)</Text>
+            <Text style={StyleSheet.largeText}>Aika (min)</Text>
             <TextInput style={StyleSheet.input}
                 value={time}
                 onChangeText={text => setTime(text)}
                 keyboardType='numeric'
                 placeholder='minutes'/>
-            <Text>Kommentit</Text>
-            <TextInput style={StyleSheet.input}
+            <Text style={StyleSheet.largeText}>Kommentit</Text>
+            <TextInput style={StyleSheet.commentsInput}
                 value={comments}
                 onChangeText={text => setComments(text)}/>
             </View>
