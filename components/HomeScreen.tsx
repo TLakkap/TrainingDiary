@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { storeData, getData, updateData, getWorkoutsForMonth, clearAll } from '../workoutStorage'
+import { storeData, getData, updateData, getWorkoutsForMonth, clearAll, storeProgressData } from '../workoutStorage'
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
@@ -16,13 +16,13 @@ interface Workout {
   classification: string
   comments: string
   details: {
-      kms: string | undefined
-      time: string | undefined
+      kms: string
+      time: string
       gymExercise: string
       gymExerciseDetails: {
-        weights: string | undefined
-        reps: string | undefined
-      }[] | undefined
+        weights: string
+        reps: string
+      }[]
   }
 }
 
@@ -100,6 +100,13 @@ export default function HomeScreen({route, navigation}: Props) {
       }
       handleStoreData(workout)
       setWorkouts(workouts.concat(workout))  // new workout is rendered to the screen
+      if (route.params.classification === "Kuntosali") {
+        const gymExerciseDetails = route.params.details.gymExerciseDetails
+        const maxWeights = gymExerciseDetails?.reduce((max, exercise) => {
+          return (exercise.weights > max) ? exercise.weights : max
+        }, gymExerciseDetails[0].weights)
+        storeProgress(route.params.details.gymExercise, maxWeights)
+      }
     }
   }, [route.params?.details])
 
@@ -109,10 +116,20 @@ export default function HomeScreen({route, navigation}: Props) {
 
   const handleStoreData = async (workout: Workout) => {
     try {
-      await storeData(date, workout);
-      console.log('Workout saved');
+      await storeData(date, workout)
+      console.log('Workout saved')
     } catch (error) {
-      console.error('Save error:', error);
+      console.error('Save error:', error)
+    }
+  }
+
+  const storeProgress = async (exercise: string, maxWeights: string) => {
+    console.log("weights:", maxWeights)
+    try {
+      await storeProgressData(date, exercise, maxWeights)
+      console.log('Progress saved')
+    } catch (error) {
+      console.error('Progress save error:', error)
     }
   }
 
@@ -164,7 +181,6 @@ export default function HomeScreen({route, navigation}: Props) {
   }
 
   const handleDayChange = (day: string) => {
-    //setWorkouts([])
     setIsLoading(true)
     const parsedDate = new Date(day); // parse date from string
     setDate(parsedDate.toISOString().split('T')[0])

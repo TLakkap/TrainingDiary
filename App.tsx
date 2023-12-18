@@ -12,13 +12,13 @@ interface Workout {
   classification: string
   comments: string
   details: {
-      kms: string | undefined
-      time: string | undefined
+      kms: string
+      time: string
       gymExercise: string
       gymExerciseDetails: {
-        weights: string | undefined
-        reps: string | undefined
-      }[] | undefined
+        weights: string
+        reps: string
+      }[]
   }
 }
 
@@ -26,14 +26,14 @@ export type RootStackParams = {
   Login: undefined;
   Home: {
     details: {
-      kms: string | undefined
-      time: string | undefined
+      kms: string
+      time: string
       gymExercise: string
       gymExerciseDetails: {
-        weights: string | undefined
-        reps: string | undefined
-      }[] | undefined
-  } | undefined
+        weights: string
+        reps: string
+      }[]
+  }
     classification: string
     comments: string
     updatedWorkouts: Workout[]
@@ -63,7 +63,7 @@ const RootStack = createNativeStackNavigator<RootStackParams>();
 export default function App() {
   return (
     <NavigationContainer >
-      <RootStack.Navigator initialRouteName='Login' 
+      <RootStack.Navigator initialRouteName='Home' 
         screenOptions={{ headerStyle: { backgroundColor: '#008000' }, headerTintColor: '#ffffff',
           headerTitleStyle: { fontWeight: 'bold' }
         }}>

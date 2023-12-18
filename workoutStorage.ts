@@ -5,13 +5,13 @@ interface Workout {
   classification: string
   comments: string
   details: {
-      kms: string | undefined
-      time: string | undefined
+      kms: string
+      time: string
       gymExercise: string
       gymExerciseDetails: {
-        weights: string | undefined
-        reps: string | undefined
-      }[] | undefined
+        weights: string
+        reps: string
+      }[]
   }
 }
 
@@ -39,22 +39,42 @@ export const getWorkoutsForMonth = async (month: number, year: number) => {
 };
 
 export const storeData = async (date: string, newWorkout: Workout): Promise<void> => {
-    try {
-      let existingWorkouts: Workout[] = []
-      const existingData = await AsyncStorage.getItem(date)
+  try {
+    let existingWorkouts: Workout[] = []
+    const existingData = await AsyncStorage.getItem(date)
 
-      if(existingData) {
-        const jsonExisting = JSON.parse(existingData)
-        existingWorkouts = existingWorkouts.concat(jsonExisting)
-      }
-
-      const updatedWorkouts = [...existingWorkouts, newWorkout]
-      const jsonWorkouts = JSON.stringify(updatedWorkouts);
-      await AsyncStorage.setItem(date, jsonWorkouts);
-    } catch (error) {
-      console.error(error);
+    if(existingData) {
+      const jsonExisting = JSON.parse(existingData)
+      existingWorkouts = existingWorkouts.concat(jsonExisting)
     }
-  };
+
+    const updatedWorkouts = [...existingWorkouts, newWorkout]
+    const jsonWorkouts = JSON.stringify(updatedWorkouts);
+    await AsyncStorage.setItem(date, jsonWorkouts);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const storeProgressData =async (date: string, gymExercise: string, weights: string) => {
+  try {
+    let existingProgress: any = []
+    const existingData = await AsyncStorage.getItem(gymExercise)
+
+    if(existingData) {
+      const jsonExisting = JSON.parse(existingData)
+      existingProgress = existingProgress.concat(jsonExisting)
+    }
+
+    const newProgress = {date: date, weights: weights}
+
+    const updatedProgress = [...existingProgress, newProgress]
+    const jsonProgress = JSON.stringify(updatedProgress);
+    await AsyncStorage.setItem(gymExercise, jsonProgress);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export const updateData = async (date: string, updatedWorkouts: Workout[]): Promise<void> => {
   try {
