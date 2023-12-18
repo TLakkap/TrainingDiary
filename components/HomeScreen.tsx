@@ -42,7 +42,7 @@ export default function HomeScreen({route, navigation}: Props) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={() => navigation.navigate('AddWorkout')}>
+        <Pressable onPress={() => navigation.navigate('ProgressScreen')}>
           <FontAwesomeIcon size={24} color='white' icon={ faChartLine } />
         </Pressable>
       ),
