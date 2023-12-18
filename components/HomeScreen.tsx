@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { storeData, getData, updateData, getWorkoutsForMonth, clearAll, storeProgressData } from '../workoutStorage'
 import { RootStackParams } from '../App';
@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
+import { faChartLine } from '@fortawesome/free-solid-svg-icons/faChartLine';
 import Calendar from './Calendar';
 import StyleSheet from '../Styles'
 
@@ -37,6 +38,16 @@ export default function HomeScreen({route, navigation}: Props) {
   const [monthlyWorkouts, setMonthlyWorkouts] = useState<{ date: string; monthWorkouts: string[]; }[]>([])
   const [showDetails, setShowDetails] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => navigation.navigate('AddWorkout')}>
+          <FontAwesomeIcon size={24} color='white' icon={ faChartLine } />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {     // Set today to selected day
     setIsLoading(true)  
