@@ -76,6 +76,28 @@ export const storeProgressData =async (date: string, gymExercise: string, weight
   }
 }
 
+export const getProgress = async(gymExercise: string) => {
+  try {
+    const res = await AsyncStorage.getItem(gymExercise)
+
+    if(res){
+      try {
+        const json = JSON.parse(res);
+        return json;
+      } catch (error) {
+        console.error('Invalid JSON:', error);
+        return null;
+      }
+    } else {
+      //console.log('Data is null or undefined.');
+      return null;
+    }
+  } catch (error) {
+    console.error('AsyncStorage getItem error:', error);
+    return null;
+    }
+}
+
 export const updateData = async (date: string, updatedWorkouts: Workout[]): Promise<void> => {
   try {
     const jsonWorkouts = JSON.stringify(updatedWorkouts);
@@ -86,26 +108,26 @@ export const updateData = async (date: string, updatedWorkouts: Workout[]): Prom
 };
 
 export const getData = async(dateToRetrieve: string): Promise<Workout[] | null> => {
-    try {
-      const res = await AsyncStorage.getItem(dateToRetrieve)
+  try {
+    const res = await AsyncStorage.getItem(dateToRetrieve)
 
-      if(res){
-        try {
-          const json = JSON.parse(res);
-          return json;
-        } catch (error) {
-          console.error('Invalid JSON:', error);
-          return null;
-        }
-      } else {
-        //console.log('Data is null or undefined.');
+    if(res){
+      try {
+        const json = JSON.parse(res);
+        return json;
+      } catch (error) {
+        console.error('Invalid JSON:', error);
         return null;
       }
-    } catch (error) {
-      console.error('AsyncStorage getItem error:', error);
+    } else {
+      //console.log('Data is null or undefined.');
       return null;
-      }
-  }
+    }
+  } catch (error) {
+    console.error('AsyncStorage getItem error:', error);
+    return null;
+    }
+}
 
   export const clearAll = async () => {
     try {

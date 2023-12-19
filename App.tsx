@@ -7,6 +7,7 @@ import ChooseExerciseScreen from './components/ChooseExerciseScreen'
 import WorkoutDetailsScreen from './components/WorkoutDetailsScreen'
 import EditSavedWorkout from './components/EditSavedWorkout'
 import ProgressScreen from './components/ProgressScreen'
+import ProgressChartScreen from './components/ProgressChartScreen'
 
 interface Workout {
   id: string
@@ -58,6 +59,9 @@ export type RootStackParams = {
     date: string
   }
   ProgressScreen: undefined
+  ProgressChartScreen: {
+    exercise: string
+  }
 }
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
@@ -76,6 +80,7 @@ export default function App() {
           <RootStack.Screen name='WorkoutDetails' component={WorkoutDetailsScreen} options={{ title: 'Harjoituksen tiedot' }} />
           <RootStack.Screen name='EditSavedWorkout' component={EditSavedWorkout} options={{ title: 'Muokkaa tietoja' }} />
           <RootStack.Screen name='ProgressScreen' component={ProgressScreen} options={{ title: 'Kehityksen seuranta' }} />
+          <RootStack.Screen name='ProgressChartScreen' component={ProgressChartScreen} options={{ title: 'Kehitys' }} />
       </RootStack.Navigator>
     </NavigationContainer>
   );

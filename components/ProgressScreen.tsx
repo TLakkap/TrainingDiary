@@ -42,8 +42,7 @@ export default function ProgressScreen ({ navigation }: Props) {
     const select = (item: {id: string, exercise: string}) => {
         const id = item.id
         const exercise = item.exercise
-        console.log("Kaavioon")
-        //navigation.navigate('WorkoutDetails', {exercise, classification})
+        navigation.navigate('ProgressChartScreen', {exercise})
     }
 
     return(
