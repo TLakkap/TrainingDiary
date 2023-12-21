@@ -33,55 +33,49 @@ export default function ProgressChartScreen ({ route, navigation }: Props) {
         getWorkouts()
     }, [])
 
-    
-      console.log("progressData:", progressData)
-
     if(progressData !== undefined){
-        progressData.sort((a, b) => new Date(a.date) - new Date(b.date));
+        progressData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        let dates = progressData.map(item => new Date(item.date))
+        const formattedDates = dates.map(d => `${d.getDate()}.${d.getMonth() + 1}`)
 
     const chartData = {
-        labels: progressData.map(item => item.date),
+        labels: formattedDates,
         datasets: [
           {
-            data: progressData.map(item => item.weights),
-            color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // Viivan väri
-            strokeWidth: 2 // Viivan paksuus
+            data: progressData.map(item => parseFloat(item.weights)),
+            color: (opacity = 1) => `rgba(00, 200, 00, ${opacity})`, // Line color
+            strokeWidth: 2
           }
         ]
       };
 
     return(
         <View style={styles.container}>
+        <Text>{route.params.exercise}</Text>
         <LineChart
-        data={chartData}
-        width={350}
-        height={220}
-        chartConfig={{
-          backgroundColor: '#ffffff',
-          backgroundGradientFrom: '#ffffff',
-          backgroundGradientTo: '#ffffff',
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          style: {
-            borderRadius: 16
-          },
-          propsForDots: {
-            r: '4',
-            strokeWidth: '2',
-            stroke: '#8670F4'
-          }
-        }}
-        bezier
-        style={styles.chart}
-      />
-      <View style={styles.axisContainer}>
-        {progressData.map((item, index) => (
-          <Text key={index} style={styles.axisText}>
-            {item.date}
-          </Text>
-        ))}
-      </View>
+            data={chartData}
+            width={390}
+            height={220}
+            yAxisSuffix=' kg'
+            chartConfig={{
+                backgroundColor: '#ffffff',
+                backgroundGradientFrom: '#ffffff',
+                backgroundGradientTo: '#ffffff',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 100, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 100, 0, ${opacity})`,
+                style: {
+                    borderRadius: 16
+                },
+                propsForDots: {
+                    r: '2',
+                    strokeWidth: '1',
+                    stroke: '#008000'
+                }
+            }}
+            style={styles.chart}
+        />
         <Pressable onPress={() => navigation.navigate('ProgressScreen')}>
             <Text>
                 Takaisin
@@ -103,17 +97,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
       },
       chart: {
-        marginVertical: 8,
+        marginVertical: 20,
         borderRadius: 16,
-      },
-      axisContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingHorizontal: 20,
-        paddingTop: 10,
-      },
-      axisText: {
-        fontSize: 12,
-        color: 'black',
       },
   });
