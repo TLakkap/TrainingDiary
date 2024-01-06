@@ -1,11 +1,9 @@
-import { Text, View, Pressable, StyleSheet } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
-//import StyleSheet from '../Styles'
+import StyleSheet from '../Styles'
 import { useEffect, useState } from 'react';
-import { EXERCISEDATA } from '../Data';
 import { getProgress } from '../workoutStorage'
-//import { LineChart, Grid } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
 
 interface Progress {
@@ -51,8 +49,9 @@ export default function ProgressChartScreen ({ route, navigation }: Props) {
       };
 
     return(
-        <View style={styles.container}>
-        <Text>{route.params.exercise}</Text>
+        <View>
+            <Text style={[StyleSheet.workoutHeader, StyleSheet.workoutHeaderText]}>{route.params.exercise}</Text>
+        <View style={StyleSheet.chartContainer}>
         <LineChart
             data={chartData}
             width={390}
@@ -74,10 +73,13 @@ export default function ProgressChartScreen ({ route, navigation }: Props) {
                     stroke: '#008000'
                 }
             }}
-            style={styles.chart}
+            style={StyleSheet.chart}
         />
-        <Pressable onPress={() => navigation.navigate('ProgressScreen')}>
-            <Text>
+        </View>
+        <Pressable 
+            style={StyleSheet.pressableButton} 
+            onPress={() => navigation.navigate('ProgressScreen')}>
+            <Text style={StyleSheet.pressableText}>
                 Takaisin
             </Text>
         </Pressable>
@@ -88,16 +90,3 @@ export default function ProgressChartScreen ({ route, navigation }: Props) {
         )
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: 20,
-      },
-      chart: {
-        marginVertical: 20,
-        borderRadius: 16,
-      },
-  });

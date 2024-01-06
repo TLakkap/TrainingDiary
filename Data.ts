@@ -33,6 +33,7 @@ export const EXERCISEDATA = [
             { id: '19', exercise: 'Alatalja' },
             { id: '20', exercise: 'Penkkipunnerrus' },
             { id: '21', exercise: 'Dippi' },
+            { id: '22', exercise: 'Muu' },
         ]
     },
     {
@@ -43,11 +44,11 @@ export const EXERCISEDATA = [
             { id: '2', exercise: 'Jooga' },
             { id: '3', exercise: 'Pilates' },]
     },
-    {
+    /* {
         id: '4',
         classification: 'Muu',
         exercises:[
             { id: '1', exercise: 'Muu sisäliikunta' },
             { id: '2', exercise: 'Muu ulkoliikunta' },]
-    },
+    }, */
 ]

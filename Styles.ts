@@ -141,5 +141,15 @@ export default StyleSheet.create({
       commentsInput: {
         marginLeft: 5,
         marginRight: 5,
-      }
+      },
+      chartContainer: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 20,
+      },
+      chart: {
+        marginVertical: 20,
+        borderRadius: 16,
+      },
 })
