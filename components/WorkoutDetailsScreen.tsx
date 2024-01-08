@@ -126,13 +126,13 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
                 value={kms}
                 onChangeText={text => setKms(text)}
                 keyboardType='numeric'
-                placeholder='km'/>
+                />
             <Text style={StyleSheet.largeText}>Aika (min)</Text>
             <TextInput style={StyleSheet.input}
                 value={time}
                 onChangeText={text => setTime(text)}
                 keyboardType='numeric'
-                placeholder='minutes'/>
+                />
             <Text style={StyleSheet.largeText}>Kommentit</Text>
             <TextInput style={StyleSheet.commentsInput}
                 value={comments}
@@ -144,14 +144,14 @@ export default function WorkoutDetailsScreen ({route, navigation}: Props) {
     const stretchDetails = () => {
         return(
             <View>
-            <Text>Aika (min)</Text>
+            <Text style={StyleSheet.largeText}>Aika (min)</Text>
             <TextInput style={StyleSheet.input}
                 value={time}
                 onChangeText={text => setTime(text)}
                 keyboardType='numeric'
-                placeholder='minutes'/>
-            <Text>Kommentit</Text>
-            <TextInput style={StyleSheet.input}
+                />
+            <Text style={StyleSheet.largeText}>Kommentit</Text>
+            <TextInput style={StyleSheet.commentsInput}
                 value={comments}
                 onChangeText={text => setComments(text)}/>
             </View>

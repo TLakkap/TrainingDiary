@@ -225,6 +225,13 @@ export default function HomeScreen({route, navigation}: Props) {
     </View>
   )}
 
+  const showStretch = (details: any) => {
+    return (
+      <View style={(details.time !== '') ? StyleSheet.listElement : null}>
+        {details.time !== '' && <Text>{details.time} min</Text>}
+      </View>
+    )}
+
   const showGym = (d: any, index: number, id: string) => (
     <View key={index} style={StyleSheet.listElement}>
       {d.weights !== '' && <Text> {d.weights} kg</Text>}
@@ -249,6 +256,7 @@ export default function HomeScreen({route, navigation}: Props) {
                 {w.classification === "Kuntosali" && <View>{w.details.gymExerciseDetails?.map((d, index) =>
                   showGym(d, index, w.id)
                 )}</View>}
+                {w.classification === "Kehonhuolto" && <View>{showStretch(w.details)}</View>}
                 {w.comments && <Text style={StyleSheet.comments}>{w.comments}</Text>}
               </View>
             }
