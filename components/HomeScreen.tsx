@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, Button, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { storeData, getData, updateData, getWorkoutsForMonth, clearAll, storeProgressData } from '../workoutStorage'
+import { storeData, getData, updateData, getWorkoutsForMonth, clearAll, storeProgressData, getProgress, storeUpdatedProgressData } from '../workoutStorage'
 import { RootStackParams } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
@@ -153,13 +153,20 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
-  const deleteWorkout = async (id: string) => {
+  const deleteWorkout = async (id: string, exercise: string) => {
     const findWorkout = workouts.findIndex(item => item.id === id)
     if (findWorkout >= 0) {
       let updatedWorkouts = [...workouts]
+      const deletedWorkout = updatedWorkouts[findWorkout].details.gymExerciseDetails
+      const deletedWeights = deletedWorkout.map(w => parseFloat(w.weights))
+      const deletedWeight = Math.max(...deletedWeights)
       updatedWorkouts.splice(findWorkout, 1)
       await handleUpdateData(updatedWorkouts)
       setWorkouts(updatedWorkouts)
+      let chartData = await getProgress(exercise)
+      const deletedProgressIndex = chartData.findIndex((cd: { date: string; weights: number }) => cd.date === date && cd.weights === deletedWeight)
+      chartData.splice(deletedProgressIndex, 1)
+      storeUpdatedProgressData(exercise, chartData)
     } else {
       console.log("Invalid index")
     }
@@ -210,7 +217,7 @@ export default function HomeScreen({route, navigation}: Props) {
         <Pressable style={StyleSheet.workoutHeaderText} onPress={() => editSavedWorkout(id, classification)} >
             <FontAwesomeIcon size={22} icon={ faPencil } />
         </Pressable>
-        <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id)}>
+        <Pressable style={StyleSheet.workoutHeaderText} onPress={() => deleteWorkout(id, details.gymExercise)}>
           <FontAwesomeIcon size={22} icon={ faTrashCan } />
         </Pressable>
       </View>
@@ -278,7 +285,7 @@ export default function HomeScreen({route, navigation}: Props) {
           onPress={() => navigation.navigate('AddWorkout')}>
             <Text style={StyleSheet.pressableText}>Lisää harjoitus</Text>
         </Pressable>
-        {/* <Button title='Tyhjennä' onPress={() => clearAll()} /> */}
+      <Button title='Tyhjennä' onPress={() => clearAll()} />
     </View>
   );
 }

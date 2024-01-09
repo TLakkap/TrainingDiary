@@ -76,6 +76,15 @@ export const storeProgressData =async (date: string, gymExercise: string, weight
   }
 }
 
+export const storeUpdatedProgressData = async (gymExercise: string, updatedProgress: any[]) => {
+  try {
+    const jsonProgress = JSON.stringify(updatedProgress);
+    await AsyncStorage.setItem(gymExercise, jsonProgress);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export const getProgress = async(gymExercise: string) => {
   try {
     const res = await AsyncStorage.getItem(gymExercise)
