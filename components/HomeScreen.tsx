@@ -172,15 +172,25 @@ export default function HomeScreen({route, navigation}: Props) {
     }
   }
 
-  const deleteSet = async (id: string, index: number) => {
+  const deleteSet = async (id: string, index: number, exercise: string) => {
     const findWorkout = workouts.findIndex(item => item.id === id)
     if (findWorkout >= 0) {
       let updatedWorkouts = [...workouts]
       let updatedSet = updatedWorkouts[findWorkout]
+      const deletedWeights = updatedSet.details.gymExerciseDetails.map(d => parseFloat(d.weights))
+      const deletedWeightsMax = Math.max(...deletedWeights)
       updatedSet.details.gymExerciseDetails?.splice(index, 1)
       updatedWorkouts[findWorkout] = updatedSet
       await handleUpdateData(updatedWorkouts)
       setWorkouts(updatedWorkouts)
+      const updatedWeights = updatedWorkouts[findWorkout].details.gymExerciseDetails.map(d => parseFloat(d.weights))
+      const newMax = Math.max(...updatedWeights)
+      if (deletedWeightsMax > newMax) {
+        let chartData = await getProgress(exercise)
+        const deletedMaxIndex = chartData.findIndex((cd: { date: string; weights: number }) => cd.date === date && cd.weights === deletedWeightsMax)
+        chartData[deletedMaxIndex].weights = newMax
+        storeUpdatedProgressData(exercise, chartData)
+      }
     } else {
       console.log("Invalid index")
     }
@@ -239,11 +249,11 @@ export default function HomeScreen({route, navigation}: Props) {
       </View>
     )}
 
-  const showGym = (d: any, index: number, id: string) => (
+  const showGym = (d: any, index: number, id: string, exercise: string) => (
     <View key={index} style={StyleSheet.listElement}>
       {d.weights !== '' && <Text> {d.weights} kg</Text>}
       {d.reps !== '' && <Text>x {d.reps} </Text>}
-      <Pressable onPress={() => deleteSet(id, index)}>
+      <Pressable onPress={() => deleteSet(id, index, exercise)}>
         <FontAwesomeIcon icon={ faTrashCan } />
       </Pressable>
     </View>
@@ -261,7 +271,7 @@ export default function HomeScreen({route, navigation}: Props) {
               <View>
                 {w.classification === "Cardio" && <View>{showCardio(w.details)}</View>}
                 {w.classification === "Kuntosali" && <View>{w.details.gymExerciseDetails?.map((d, index) =>
-                  showGym(d, index, w.id)
+                  showGym(d, index, w.id, w.details.gymExercise)
                 )}</View>}
                 {w.classification === "Kehonhuolto" && <View>{showStretch(w.details)}</View>}
                 {w.comments && <Text style={StyleSheet.comments}>{w.comments}</Text>}
