@@ -1,4 +1,4 @@
-import { Text, View, Pressable } from 'react-native';
+import { Text, View, Pressable, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import StyleSheet from '../Styles'
@@ -15,21 +15,28 @@ type Props = NativeStackScreenProps<RootStackParams, "ProgressChartScreen">
 
 export default function ProgressChartScreen ({ route, navigation }: Props) {
     const [progressData, setProgressData] = useState<Progress[]>()
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        setIsLoading(true)
         const gymExercise = route.params.exercise
         const getWorkouts = async () => {
             if (gymExercise !== null){
               const response = await getProgress(gymExercise)
               if (response) {
-                console.log(response)
                 setProgressData(response)
+                setIsLoading(false) 
               } else {
-                console.log("Ei tietoja")
+                console.log("No exercises")
+                setIsLoading(false)
               }
         }}
         getWorkouts()
     }, [])
+
+    if(isLoading) {
+        return( <ActivityIndicator size="large" color="#00ff00" />)
+      }
 
     if(progressData !== undefined){
         progressData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -86,7 +93,7 @@ export default function ProgressChartScreen ({ route, navigation }: Props) {
         </View>
     )} else {
         return(
-            <Text>Nothing to see here</Text>
+            <Text>Ei tallennettuja harjoituksia</Text>
         )
     }
 }
