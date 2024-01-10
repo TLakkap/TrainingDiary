@@ -295,7 +295,7 @@ export default function HomeScreen({route, navigation}: Props) {
           onPress={() => navigation.navigate('AddWorkout')}>
             <Text style={StyleSheet.pressableText}>Lisää harjoitus</Text>
         </Pressable>
-      <Button title='Tyhjennä' onPress={() => clearAll()} />
+      {/* <Button title='Tyhjennä' onPress={() => clearAll()} /> */}
     </View>
   );
 }

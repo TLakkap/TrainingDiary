@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text, View, TextInput, Pressable, ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
-import { updateData } from '../workoutStorage'
+import { updateData, getProgress, storeUpdatedProgressData } from '../workoutStorage'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
@@ -38,12 +38,15 @@ export default function EditSavedWorkout({route, navigation}: Props) {
     const [time, setTime] = useState('0')
     const [updateMode, setUpdateMode] = useState(false)
     const [updateIndex, setUpdateIndex] = useState<number>(0)
+    const [maxWeightBefore, setMaxWeightBefore] = useState(0)
 
     const foundWorkoutIndex = updatedWorkouts.findIndex(w => w.id === id)
 
     useEffect(()=> {
         if(classification === "Kuntosali"){
             setExerciseDetails(updatedWorkouts[foundWorkoutIndex].details.gymExerciseDetails)
+            const weightsBefore = updatedWorkouts[foundWorkoutIndex].details.gymExerciseDetails.map(d => parseFloat(d.weights))
+            setMaxWeightBefore(Math.max(...weightsBefore))
         } else if(classification === "Cardio"){
             setKms(updatedWorkouts[foundWorkoutIndex].details.kms)
             setTime(updatedWorkouts[foundWorkoutIndex].details.time)
@@ -60,7 +63,7 @@ export default function EditSavedWorkout({route, navigation}: Props) {
         }
       }
 
-    const handleSavePress = () => {
+    const handleSavePress = async () => {
         updatedWorkouts[foundWorkoutIndex].comments = comments
         updatedWorkouts[foundWorkoutIndex].details = {
             kms: kms,
@@ -69,6 +72,16 @@ export default function EditSavedWorkout({route, navigation}: Props) {
             gymExerciseDetails: exerciseDetails
         }
         handleUpdateData(updatedWorkouts)
+
+        const weightsAfter = updatedWorkouts[foundWorkoutIndex].details.gymExerciseDetails.map(d => parseFloat(d.weights))
+        const maxWeightAfter = Math.max(...weightsAfter)
+
+        if(maxWeightBefore !== maxWeightAfter) {
+            let chartData = await getProgress(updatedWorkouts[foundWorkoutIndex].details.gymExercise)
+            const deletedMaxIndex = chartData.findIndex((cd: { date: string; weights: number }) => cd.date === date && cd.weights === maxWeightBefore)
+            chartData[deletedMaxIndex].weights = maxWeightAfter
+            storeUpdatedProgressData(updatedWorkouts[foundWorkoutIndex].details.gymExercise, chartData)
+        }
 
         navigation.goBack()
         navigation.navigate('Home', { updatedWorkouts })}
